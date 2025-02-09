@@ -1,0 +1,9 @@
+/* Import the shared styles */
+@import './BuilderRegistration.css';
+
+/* Add any buyer-specific styles here if needed */
+.buyer-registration {
+  min-height: 100vh;
+  padding: 100px 20px 60px;
+  background: rgba(19, 17, 28, 0.95);
+} 
