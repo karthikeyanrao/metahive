@@ -3,6 +3,8 @@ import "./PropertyDetails.css";
 import home from "./home.png";
 import ThreeBackground from './ThreeBackground';
 
+
+
 function PropertyDetails() {
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -172,3 +174,5 @@ function PropertyDetails() {
 }
 
 export default PropertyDetails;
+
+

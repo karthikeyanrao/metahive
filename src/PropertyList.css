@@ -132,15 +132,17 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  margin: 1rem 0;
+  margin: 1rem 0 0 0;
 }
 
 .map-container {
-  width: 60%;  /* Adjust this value to control map width */
-  height: 400px;
+  width: 60%;
+  height: 300px;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .filters-container {
@@ -246,4 +248,74 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: bold;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #00FFC6;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 255, 198, 0.2);
+  border-left-color: #00FFC6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #fff;
+  background: rgba(0, 27, 72, 0.5);
+  border-radius: 8px;
+  margin: 2rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  margin-top: 1rem;
+}
+
+.property-card {
+  background: rgba(19, 17, 28, 0.8);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.property-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  margin: -2px;
+  border-radius: inherit;
+  background: linear-gradient(45deg, #001B48, #00FFC6);
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 255, 198, 0.15);
 } 

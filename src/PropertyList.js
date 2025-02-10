@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import { db } from './context/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import 'leaflet/dist/leaflet.css';
 import image1 from './home.png';
 import './PropertyList.css';
@@ -16,7 +18,7 @@ const redMarker = new L.Icon({
 });
 
 function PropertyList() {
-  const [properties] = useState([
+  const [properties, setProperties] = useState([
     { id: 1, title: 'Modern Downtown Apartment', price: 450000, location: 'Church Street, Bangalore', bedrooms: 2, bathrooms: 2, area: 1200, lat: 12.9758, lng: 77.6095, image: image1 },
     { id: 2, title: 'Luxury Condo', price: 650000, location: 'Indiranagar, Bangalore', bedrooms: 3, bathrooms: 2, area: 1500, lat: 12.9716, lng: 77.6412, image: image1 },
     { id: 3, title: 'Stylish Loft', price: 850000, location: 'Whitefield, Bangalore', bedrooms: 4, bathrooms: 3, area: 1800, lat: 12.9698, lng: 77.7499, image: image1 },
@@ -28,7 +30,30 @@ function PropertyList() {
 
   useEffect(() => {
     setIsClient(true);
+    fetchProperties();
   }, []);
+
+  const fetchProperties = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'properties'));
+      const firestoreProperties = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        lat: 12.9716, // Default latitude
+        lng: 77.5946, // Default longitude
+        image: image1, // Default image
+      }));
+
+     setProperties(prev => {
+  const existingIds = new Set(prev.map(p => p.id));
+  const newProperties = firestoreProperties.filter(p => !existingIds.has(p.id));
+  return [...prev, ...newProperties];
+});
+
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    }
+  };
 
   const filteredProperties = properties.filter(property => {
     const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -67,7 +92,7 @@ function PropertyList() {
 
         {isClient && (
           <div style={{ height: '500px', width: '100%' }}>
-            <MapContainer center={[12.9716, 77.5946]} zoom={13} style={{ height: '50%', width: '40%' , marginLeft: '150px'}}>
+            <MapContainer center={[12.9716, 77.5946]} zoom={13} style={{ height: '50%', width: '40%' , marginLeft: '10px'}}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {filteredProperties.map((property) => (
                 <Marker key={property.id} position={[property.lat, property.lng]} icon={redMarker}>
@@ -100,4 +125,4 @@ function PropertyList() {
   );
 }
 
-export default PropertyList; 
+export default PropertyList;

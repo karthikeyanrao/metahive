@@ -3,9 +3,7 @@ import './AddProperty.css';
 import ThreeBackground from './ThreeBackground';
 import { db } from './context/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
-
 
 function AddProperty() {
   const navigate = useNavigate();
@@ -17,14 +15,8 @@ function AddProperty() {
     bedrooms: '',
     bathrooms: '',
     area: '',
-    description: '',
-    image: null,
-    lat: '',  // Added for map functionality
-    lng: ''   // Added for map functionality
+    description: ''
   });
-
-  const [dragActive, setDragActive] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,42 +24,6 @@ function AddProperty() {
       ...prevState,
       [name]: value
     }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFileName(file.name);
-      setFormData(prevState => ({
-        ...prevState,
-        image: file
-      }));
-    }
-  };
-
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      setSelectedFileName(file.name);
-      setFormData(prevState => ({
-        ...prevState,
-        image: file
-      }));
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -86,10 +42,6 @@ function AddProperty() {
         bathrooms: Number(formData.bathrooms),
         area: Number(formData.area),
         description: formData.description,
-        // Instead of uploading image, we'll store a default image URL for now
-        imageUrl: 'https://via.placeholder.com/400x300',
-        lat: 12.9716,
-        lng: 77.5946,
         createdAt: new Date().toISOString()
       };
 
@@ -108,10 +60,7 @@ function AddProperty() {
         bedrooms: '',
         bathrooms: '',
         area: '',
-        description: '',
-        image: null,
-        lat: '',
-        lng: ''
+        description: ''
       });
       
       // Redirect to properties page
@@ -227,40 +176,18 @@ function AddProperty() {
             />
           </div>
 
-          <div className="form-group">
-            <div 
-              className={`file-input-label ${dragActive ? 'drag-active' : ''}`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <input
-                type="file"
-                id="image"
-                name="image"
-                onChange={handleImageChange}
-                accept="image/*"
-                required
-              />
-              <span>
-                {selectedFileName ? selectedFileName : "Drag and drop your images here or click to select"}
-              </span>
-            </div>
-          </div>
-
           <button 
             type="submit" 
             className="submit-button"
             disabled={isLoading}
           >
             {isLoading ? (
-              <span className="loading-text">
-                <span className="loading-spinner"></span>
-                Listing Property...
-              </span>
+              
+                <span className="loading-spinner"> </span>
+                    
+            
             ) : (
-              'List Property'
+              'AddProperty'
             )}
           </button>
         </form>
