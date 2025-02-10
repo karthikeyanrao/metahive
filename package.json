@@ -4,10 +4,15 @@
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.1",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
     "firebase": "^11.3.0",
+    "hardhat-deploy": "^0.14.0",
+    "hardhat-ethers": "^1.0.1",
     "leaflet": "^1.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -41,5 +46,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.18"
   }
 }

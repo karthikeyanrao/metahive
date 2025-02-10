@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import "./PropertyDetails.css";
 import home from "./home.png";
 import ThreeBackground from './ThreeBackground';
-
-
+import { ethers } from 'ethers';
+import { useWeb3 } from './context/Web3Context'; // Make sure you have this context
+import { SENDER_ADDRESS, SENDER_ABI } from './contracts/SenderContract';
 
 function PropertyDetails() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const { isConnected, account } = useWeb3();
+  const [paymentStatus, setPaymentStatus] = useState('');
 
   const images = [
     { id: 1, url: home, alt: "Living Room" },
@@ -45,6 +48,50 @@ function PropertyDetails() {
     "Home Theater",
   ];
 
+  const handlePayment = async () => {
+    try {
+      if (!isConnected) {
+        alert('Please connect your wallet first');
+        return;
+      }
+      
+      // Get contract instance
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      
+      // Create contract instance with ABI
+      const senderContract = new ethers.Contract(
+        SENDER_ADDRESS, 
+        SENDER_ABI, 
+        signer
+      );
+
+      // Amount to send (2 ETH)
+      const amountToSend = ethers.parseEther("2.0");
+
+      setPaymentStatus('Processing payment...'); // Show processing status
+      
+      // Send transaction
+      const tx = await senderContract.sendEther({ value: amountToSend });
+      await tx.wait();
+      
+      setPaymentStatus(''); // Clear the status
+      alert('Payment sent successfully!');
+    } catch (error) {
+      console.error('Payment error:', error);
+      setPaymentStatus(''); // Clear the status
+      
+      // Show user-friendly error message
+      if (error.code === 'ACTION_REJECTED') {
+        alert('Transaction was rejected by user');
+      } else if (error.code === 'INSUFFICIENT_FUNDS') {
+        alert('Insufficient funds to complete the transaction');
+      } else {
+        alert(`Payment failed: ${error.message || 'Please try again'}`);
+      }
+    }
+  };
+
   return (
     <>
       <ThreeBackground />
@@ -57,7 +104,7 @@ function PropertyDetails() {
                 <i className="fas fa-map-marker-alt"></i>
                 Downtown, Metropolis
               </div>
-              <div className="property-price">$2,500,000</div>
+              <div className="property-price">$5000,000</div>
             </div>
             <div className="property-tags">
               <span className="tag">Premium</span>
@@ -166,6 +213,19 @@ function PropertyDetails() {
               <i className="fas fa-calendar-alt"></i>
               Schedule Viewing
             </button>
+            <button 
+              className="pay-button"
+              onClick={handlePayment}
+              disabled={!isConnected}
+            >
+              <i className="fas fa-credit-card"></i>
+              Pay Now
+            </button>
+            {paymentStatus && (
+              <div className={`payment-status ${paymentStatus.includes('failed') ? 'error' : ''}`}>
+                {paymentStatus}
+              </div>
+            )}
           </div>
         </div>
       </div>

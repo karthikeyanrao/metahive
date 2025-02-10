@@ -9,8 +9,8 @@ import image1 from './home.png';
 import './PropertyList.css';
 import ThreeBackground from './ThreeBackground';
 
-// Marker icon
-const markerIcon = new L.Icon({
+// Red marker icon
+const redMarker = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/128/684/684908.png',
   iconSize: [30, 30],
   iconAnchor: [15, 30],
@@ -27,7 +27,6 @@ function PropertyList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('all');
   const [isClient, setIsClient] = useState(false);
-  const [mapVisible, setMapVisible] = useState(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -72,10 +71,6 @@ function PropertyList() {
     return matchesSearch && matchesPrice;
   });
 
-  const toggleMap = (id) => {
-    setMapVisible(mapVisible === id ? null : id);
-  };
-
   return (
     <>
       <ThreeBackground />
@@ -100,7 +95,7 @@ function PropertyList() {
             <MapContainer center={[12.9716, 77.5946]} zoom={13} style={{ height: '50%', width: '40%' , marginLeft: '10px'}}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {filteredProperties.map((property) => (
-                <Marker key={property.id} position={[property.lat, property.lng]} icon={markerIcon}>
+                <Marker key={property.id} position={[property.lat, property.lng]} icon={redMarker}>
                   <Popup>
                     <b>{property.title}</b><br />
                     {property.location}<br />
@@ -114,32 +109,15 @@ function PropertyList() {
 
         <div className="properties-grid">
           {filteredProperties.map((property) => (
-            <div key={property.id} className="property-card">
+            <Link to={`/property/${property.id}`} key={property.id} className="property-card">
               <img src={property.image} alt={property.title} />
               <div className="property-info">
                 <h3>{property.title}</h3>
                 <p className="price">${property.price.toLocaleString()}</p>
                 <p className="details">{property.bedrooms} beds • {property.bathrooms} baths • {property.area} sqft</p>
-                
-                {/* Location text toggles mini-map */}
-                <p className="location" onClick={() => toggleMap(property.id)} style={{ cursor: 'pointer', color: '#4CAF50', textDecoration: 'underline' }}>
-                   {property.location}
-                </p>
-
-                {/* Mini-map container */}
-                {mapVisible === property.id && (
-                  <div className="mini-map-container">
-                    <button className="close-btn" onClick={() => setMapVisible(null)}>✖</button>
-                    <MapContainer center={[property.lat, property.lng]} zoom={15} style={{ height: '200px', width: '100%' }}>
-                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                      <Marker position={[property.lat, property.lng]} icon={markerIcon}>
-                        <Popup>{property.location}</Popup>
-                      </Marker>
-                    </MapContainer>
-                  </div>
-                )}
+                <p className="location">{property.location}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

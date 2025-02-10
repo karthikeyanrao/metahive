@@ -187,7 +187,7 @@ function AddProperty() {
                     
             
             ) : (
-              'AddProperty'
+              'Add Property'
             )}
           </button>
         </form>

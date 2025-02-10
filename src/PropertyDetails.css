@@ -383,3 +383,45 @@
   height: 100%;
   z-index: 1;
 }
+
+.pay-button {
+  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  color: #13111C;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pay-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(82, 255, 168, 0.2);
+}
+
+.pay-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.payment-status {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: rgba(82, 255, 168, 0.1);
+  color: #52FFA8;
+  text-align: center;
+}
+
+.payment-status.error {
+  background: rgba(255, 82, 82, 0.1);
+  color: #ff5252;
+}
+
+.fas.fa-credit-card {
+  font-size: 1.1rem;
+}

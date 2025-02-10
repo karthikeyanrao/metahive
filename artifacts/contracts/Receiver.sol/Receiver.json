@@ -1,0 +1,51 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Receiver",
+  "sourceName": "contracts/Receiver.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReceivedPayment",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "inputs": [],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b50610164806100206000396000f3fe6080604052600436106100225760003560e01c806312065fe0146100c757610077565b36610077573373ffffffffffffffffffffffffffffffffffffffff167f36fafa197834e3cf5a81c5718938b2aa7081dfd005bd22c3c995bb80edd1fe343460405161006d9190610113565b60405180910390a2005b3373ffffffffffffffffffffffffffffffffffffffff167f36fafa197834e3cf5a81c5718938b2aa7081dfd005bd22c3c995bb80edd1fe34346040516100bd9190610113565b60405180910390a2005b3480156100d357600080fd5b506100dc6100f2565b6040516100e99190610113565b60405180910390f35b600047905090565b6000819050919050565b61010d816100fa565b82525050565b60006020820190506101286000830184610104565b9291505056fea2646970667358221220721935f3ddc625fbb50c2e145ddecaca0ace50b6c5dc8f6639d0e94db004ec0964736f6c63430008120033",
+  "deployedBytecode": "0x6080604052600436106100225760003560e01c806312065fe0146100c757610077565b36610077573373ffffffffffffffffffffffffffffffffffffffff167f36fafa197834e3cf5a81c5718938b2aa7081dfd005bd22c3c995bb80edd1fe343460405161006d9190610113565b60405180910390a2005b3373ffffffffffffffffffffffffffffffffffffffff167f36fafa197834e3cf5a81c5718938b2aa7081dfd005bd22c3c995bb80edd1fe34346040516100bd9190610113565b60405180910390a2005b3480156100d357600080fd5b506100dc6100f2565b6040516100e99190610113565b60405180910390f35b600047905090565b6000819050919050565b61010d816100fa565b82525050565b60006020820190506101286000830184610104565b9291505056fea2646970667358221220721935f3ddc625fbb50c2e145ddecaca0ace50b6c5dc8f6639d0e94db004ec0964736f6c63430008120033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,15 @@
+console.log("Receiver Balance: ${ethers.utils.formatEther(balance)} ETH");
+const balance = await receiver.getBalance();
+const receiver = await ethers.getContractAt("Receiver","0x935b78D1862de1FF6504F338752A32E1c0211920");
+console.log("Receiver Balance: ${ethers.utils.formatEther(balance)} ETH");
+console.log("Receiver Balance:", ${ethers.utils.formatEther(balance)} ETH);
+console.log("Receiver Balance:" ${ethers.utils.formatEther(balance)} ETH);
+const balance = await receiver.getBalance();
+const receiver = await ethers.getContractAt("Receiver","0x935b78D1862de1FF6504F338752A32E1c0211920");
+console.log(Receiver Contract Balance: ${ethers.utils.formatEther(balance)} ETH);
+const receiverContract = await ethers.getContractAt("Receiver", "0x935b78D1862de1FF6504F338752A32E1c0211920");
+const balance = await receiverContract.getBalance();
+const receiverContract = await ethers.getContractAt("Receiver", "0x935b78D1862de1FF6504F338752A32E1c0211920");
+const receiver = await ethers.getContractAt("Receiver1","0x935b78D1862de1FF6504F338752A32E1c0211920");
+const receiver = await ethers.getContractAt("Receiver","0x935b78D1862de1FF6504F338752A32E1c0211920");
+const receiver = await ethers.getContractAt("Receiver",  0x935b78D1862de1FF6504F338752A32E1c0211920);
