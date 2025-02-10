@@ -72,9 +72,6 @@ function Navbar() {
             <Link to="/login" className="login-nav-button">
               Login 
             </Link>
-            <button onClick={connectWallet} className="login-button">
-              Connect with Wallet
-            </button>
           </div>
         )}
       </div>

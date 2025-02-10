@@ -3,6 +3,8 @@
   padding: 2rem;
   max-width: 1200px;
   min-height: calc(100vh - 80px);
+  position: relative;
+  z-index: 2;
 }
 
 .property-header {
@@ -338,4 +340,13 @@
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, rgba(82, 255, 168, 0.3), transparent);
+}
+
+.ThreeBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }

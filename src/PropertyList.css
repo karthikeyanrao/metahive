@@ -1,6 +1,8 @@
 .property-list {
   padding: 2rem;
   margin-top: 70px; /* Space for navbar */
+  position: relative;
+  z-index: 2;
 }
 
 .filters {
@@ -111,4 +113,83 @@
   .filters {
     flex-direction: column;
   }
+}
+
+.ThreeBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+.map-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.map-container {
+  width: 60%;  /* Adjust this value to control map width */
+  height: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filters-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #1A1625;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #52FFA8 #1A1625; /* Firefox */
+}
+
+/* Custom scrollbar for Webkit browsers */
+.filters-fixed::-webkit-scrollbar {
+  height: 6px;
+}
+
+.filters-fixed::-webkit-scrollbar-track {
+  background: #1A1625;
+}
+
+.filters-fixed::-webkit-scrollbar-thumb {
+  background: #52FFA8;
+  border-radius: 3px;
+}
+
+.search-input, 
+.price-select {
+  flex-shrink: 0; /* Prevents the inputs from shrinking */
+  min-width: 200px;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(82, 255, 168, 0.3);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #13111C;
+  color: #ffffff;
+}
+
+.search-input:focus, 
+.price-select:focus {
+  border-color: #52FFA8;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(82, 255, 168, 0.1);
 } 
