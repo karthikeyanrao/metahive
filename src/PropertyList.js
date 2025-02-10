@@ -35,17 +35,25 @@ function PropertyList() {
   const fetchProperties = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'properties'));
-      const firestoreProperties = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        lat: 12.9716, // Default latitude
-        lng: 77.5946, // Default longitude
-        image: image1, // Default image
-      }));
+      const firestoreProperties = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        
+        // Maintain exact lat/lng from Firestore
+        const latitude = data.lat !== undefined ? data.lat : 12.9716; // Default: Bangalore
+        const longitude = data.lng !== undefined ? data.lng : 77.5946; // Default: Bangalore
 
-      setProperties(prev => {
-        const existingIds = new Set(prev.map(p => p.id));
-        const newProperties = firestoreProperties.filter(p => !existingIds.has(p.id));
+        return {
+          id: doc.id,
+          ...data,
+          lat: latitude,
+          lng: longitude,
+          image: image1, // Default image
+        };
+      });
+
+      setProperties((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newProperties = firestoreProperties.filter((p) => !existingIds.has(p.id));
         return [...prev, ...newProperties];
       });
     } catch (error) {
@@ -53,10 +61,11 @@ function PropertyList() {
     }
   };
 
-  const filteredProperties = properties.filter(property => {
-    const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          property.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredProperties = properties.filter((property) => {
+    const matchesSearch =
+      property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      property.location.toLowerCase().includes(searchTerm.toLowerCase());
+
     let matchesPrice = true;
     if (priceRange === 'low') {
       matchesPrice = property.price <= 200000;
@@ -64,6 +73,10 @@ function PropertyList() {
       matchesPrice = property.price > 200000 && property.price <= 500000;
     } else if (priceRange === 'high') {
       matchesPrice = property.price > 500000;
+    } else if (priceRange === 'rent') {
+      matchesPrice = property.type === 'rent';
+    } else if (priceRange === 'sale') {
+      matchesPrice = property.type === 'sale';
     }
 
     return matchesSearch && matchesPrice;
@@ -79,8 +92,9 @@ function PropertyList() {
       <div className="property-list">
         {/* Back Button */}
         <button className="back-button" onClick={() => window.history.back()}>
-           Back
+          Back
         </button>
+
         <div className="filters">
           <input
             type="text"
@@ -88,11 +102,13 @@ function PropertyList() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
-            <option value="all">All Prices</option>
+          <select onChange={(e) => setPriceRange(e.target.value)}>
+            <option value="all">Filter</option>
             <option value="low">$0 - $200,000</option>
             <option value="mid">$200,000 - $500,000</option>
             <option value="high">$500,000+</option>
+            <option value="rent">For Rent</option>
+            <option value="sale">For Sale</option>
           </select>
         </div>
 
@@ -115,15 +131,17 @@ function PropertyList() {
                   onClick={() => toggleMap(property.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                    {property.location}
+                 {property.location}
                 </span>
               </p>
               {visibleMap === property.id && (
                 <div className="mini-map">
-                  <MapContainer center={[property.lat, property.lng]} zoom={13} style={{ height: '200px', width: '100%' }}>
+                  <MapContainer center={[property.lat, property.lng]} zoom={15} style={{ height: '200px', width: '100%' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     <Marker position={[property.lat, property.lng]} icon={redMarker}>
-                      <Popup>{property.title}</Popup>
+                      <Popup>
+                        {property.title} - {property.location}
+                      </Popup>
                     </Marker>
                   </MapContainer>
                 </div>

@@ -5,26 +5,25 @@ import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
 import { db } from './context/firebase';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import * as THREE from 'three';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './Settings.css';
+import ThreeBackground from './ThreeBackground';
 
+const storage = getStorage(); // Initialize Firebase Storage
 
 function Settings() {
   const { currentUser } = useAuth();
   const { isConnected, account } = useWeb3();
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [walletBalance, setWalletBalance] = useState(null);
-  const [isBuilder, setIsBuilder] = useState(() => {
-    // Get the stored value from localStorage or Firestore data
-    const storedValue = localStorage.getItem('isBuilder');
-    return storedValue ? storedValue === 'true' : false;
-  });
+  const [isBuilder, setIsBuilder] = useState(localStorage.getItem('isBuilder') === 'true');
 
   const [profileData, setProfileData] = useState({
     name: '',
     email: currentUser?.email || '',
     avatar: currentUser?.photoURL || '',
-    isBuilder: isBuilder // Add isBuilder to profile data
+    isBuilder: isBuilder
   });
 
   // Fetch user data including builder status from Firestore
@@ -55,6 +54,27 @@ function Settings() {
 
     fetchUserData();
   }, [currentUser]);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser?.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setProfileData(prev => ({
+              ...prev,
+              avatar: userData.avatar || localStorage.getItem('avatar') || currentUser.photoURL || ''
+            }));
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+  
+    fetchUserData();
+  }, [currentUser]);
+  
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -71,6 +91,30 @@ function Settings() {
 
     fetchBalance();
   }, [isConnected, account]);
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    try {
+      const storageRef = ref(storage, `avatars/${currentUser.uid}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+  
+      // Update Firestore and local state
+      await updateDoc(doc(db, "users", currentUser.uid), { avatar: downloadURL });
+      setProfileData(prev => ({ ...prev, avatar: downloadURL }));
+      localStorage.setItem('avatar', downloadURL);
+  
+      console.log("Avatar uploaded successfully:", downloadURL);
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+    }
+  };
+  
+  
+  const handleUploadClick = () => {
+    fileInputRef.current.click(); // Trigger file input
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,7 +127,6 @@ function Settings() {
         const docSnap = await getDoc(userRef);
         
         if (docSnap.exists()) {
-          // Update existing document
           await updateDoc(userRef, {
             isBuilder: isBuilder,
             name: profileData.name,
@@ -91,25 +134,19 @@ function Settings() {
             updatedAt: new Date().toISOString()
           });
         } else {
-          // Create new document
           await setDoc(userRef, {
             isBuilder: isBuilder,
             name: profileData.name,
             email: profileData.email,
+            avatar: profileData.avatar, 
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
         }
 
-        // Update localStorage
         localStorage.setItem('isBuilder', isBuilder);
-
-        // Show success message
         alert('Settings saved successfully!');
-        
-        // Navigate to home page after successful save
         navigate('/');
-        
       } catch (error) {
         console.error('Error saving settings:', error);
         alert(`Error saving settings: ${error.message}`);
@@ -129,86 +166,100 @@ function Settings() {
   };
 
   return (
-    <div className="settings-container">
-      <h1>Account Settings</h1>
-      
-      <div className="settings-content">
-        <div className="profile-section">
-          <div className="avatar-section">
-            <div className="avatar-preview">
-              {profileData.avatar ? (
-                <img src={profileData.avatar} alt="Profile" />
-              ) : (
-                <i className="fas fa-user-circle"></i>
-              )}
-            </div>
-            <button className="upload-button">
-              <i className="fas fa-camera"></i>
-              Upload Photo
-            </button>
-          </div>
+    <div>
+      <ThreeBackground />
+      <div className="settings-container">
+        <h1>Account Settings</h1>
 
-          <form onSubmit={handleSubmit} className="profile-form">
-            <div className="form-group">
-              <label>Name</label>
-              <input
-                type="text"
-                value={profileData.name}
-                readOnly
-                className="readonly-input"
-              />
-            </div>
+        <div className="settings-content">
+          <div className="profile-section">
 
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                value={profileData.email}
-                disabled
-                className="disabled-input"
-              />
-            </div>
-
-            <div className="wallet-info">
-              <h3>Wallet Information</h3>
-              <div className="wallet-details">
-                <div className="wallet-address">
-                  <label>MetaMask Address:</label>
-                  <span className="full-address">{account || 'Not Connected'}</span>
-                </div>
-                <div className="wallet-balance">
-                  <label>MetaMask Balance:</label>
-                  <span>{walletBalance ? `${Number(walletBalance).toFixed(4)} ETH` : 'N/A'}</span>
-                </div>
+            {/* Avatar Section
+            <div className="avatar-section">
+              <div className="avatar-preview">
+                {profileData.avatar ? (
+                  <img src={profileData.avatar} alt="Profile" />
+                ) : (
+                  <i className="fas fa-user-circle"></i>
+                )}
               </div>
-            </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <button className="upload-button" onClick={handleUploadClick}>
+                <i className="fas fa-camera"></i> Upload Photo
+              </button>
+            </div> */}
 
-            <div className="builder-section">
-              <div className="builder-checkbox">
+            {/* Profile Form */}
+            <form onSubmit={handleSubmit} className="profile-form">
+
+              <div className="form-group">
+                <label>Name</label>
                 <input
-                  type="checkbox"
-                  id="isBuilder"
-                  checked={isBuilder}
-                  onChange={handleBuilderChange}
+                  type="text"
+                  value={profileData.name}
+                  readOnly
+                  className="readonly-input"
                 />
-                <label htmlFor="isBuilder">I am a Builder</label>
               </div>
-              
-              {isBuilder && (
-                <button 
-                  type="button" 
-                  className="add-property-button"
-                  onClick={() => navigate('/add-property')}
-                >
-                  Add Property
-                </button>
-              )}
-            </div>
 
-            <button type="submit" className="save-button">
-              Save Changes
-            </button>
-          </form>
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={profileData.email}
+                  disabled
+                  className="disabled-input"
+                />
+              </div>
+
+              {/* Wallet Info */}
+              <div className="wallet-info">
+                <h3>Wallet Information</h3>
+                <div className="wallet-details">
+                  <div className="wallet-address">
+                    <label>MetaMask Address:</label>
+                    <span className="full-address">{account || 'Not Connected'}</span>
+                  </div>
+                  <div className="wallet-balance">
+                    <label>MetaMask Balance:</label>
+                    <span>{walletBalance ? `${Number(walletBalance).toFixed(4)} ETH` : 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Builder Checkbox */}
+              <div className="builder-section">
+                <div className="builder-checkbox">
+                  <input
+                    type="checkbox"
+                    id="isBuilder"
+                    checked={isBuilder}
+                    onChange={handleBuilderChange}
+                  />
+                  <label htmlFor="isBuilder">I am a Builder</label>
+                </div>
+                
+                {isBuilder && (
+                  <button 
+                    type="button" 
+                    className="add-property-button"
+                    onClick={() => navigate('/add-property')}
+                  >
+                    Add Property
+                  </button>
+                )}
+              </div>
+
+              <button type="submit" className="save-button">
+                Save Changes
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

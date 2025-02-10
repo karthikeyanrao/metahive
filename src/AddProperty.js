@@ -32,8 +32,25 @@ function AddProperty() {
 
     try {
       console.log('Starting property submission...');
-      
-      // Prepare property data
+       // 🔹 Fetch latitude and longitude using OpenStreetMap API
+       const locationQuery = encodeURIComponent(formData.location);
+       const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${locationQuery}&limit=1`);
+       const data = await response.json();
+   
+       if (data.length === 0) {
+         alert("Location not found. Please enter a valid address.");
+         setIsLoading(false);
+         return;
+       }
+   
+       // Define lat & lng before using them
+       const lat = parseFloat(data[0].lat);
+       const lng = parseFloat(data[0].lon);
+   
+       console.log(`Fetched Coordinates: ${lat}, ${lng}`);
+   
+ 
+       // 🔹 Prepare property data with lat/lng
       const propertyData = {
         title: formData.title,
         price: Number(formData.price),
@@ -42,8 +59,12 @@ function AddProperty() {
         bathrooms: Number(formData.bathrooms),
         area: Number(formData.area),
         description: formData.description,
+        lat: lat, // ✅ Ensure lat is defined
+        lng: lng, // ✅ Ensure lng is defined
         createdAt: new Date().toISOString()
       };
+  
+
 
       // Add to Firestore
       console.log('Saving to database...', propertyData);

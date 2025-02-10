@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ThreeBackground from './ThreeBackground';
 import Footer from './Footer';
 import './Home.css';
 
 function Home() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = "//code.tidio.co/w0extlr3fsolssypadddmgmxknbooasn.js"; // Your chatbot script
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script); // Cleanup when unmounting
+    };
+  }, []);
+
   return (
     <div className="home">
       <ThreeBackground />

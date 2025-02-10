@@ -99,7 +99,7 @@ function Navbar() {
                   className="avatar-button"
                   onClick={handleSettingsClick}
                 >
-                  <i className="fas fa-user-circle"></i>
+                  <i className="fas fa-user-circle">U</i>
                 </button>
                 <button onClick={handleLogout} className="logout-button">
                   Logout
