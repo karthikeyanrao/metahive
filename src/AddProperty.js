@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import './AddProperty.css';
-import Threebackground from './ThreeBackground';
+import ThreeBackground from './ThreeBackground';
+import { db } from './context/firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useNavigate } from 'react-router-dom';
+
 
 function AddProperty() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     price: '',
@@ -11,7 +18,9 @@ function AddProperty() {
     bathrooms: '',
     area: '',
     description: '',
-    image: null
+    image: null,
+    lat: '',  // Added for map functionality
+    lng: ''   // Added for map functionality
   });
 
   const [dragActive, setDragActive] = useState(false);
@@ -61,14 +70,66 @@ function AddProperty() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setIsLoading(true);
+
+    try {
+      console.log('Starting property submission...');
+      
+      // Prepare property data
+      const propertyData = {
+        title: formData.title,
+        price: Number(formData.price),
+        location: formData.location,
+        bedrooms: Number(formData.bedrooms),
+        bathrooms: Number(formData.bathrooms),
+        area: Number(formData.area),
+        description: formData.description,
+        // Instead of uploading image, we'll store a default image URL for now
+        imageUrl: 'https://via.placeholder.com/400x300',
+        lat: 12.9716,
+        lng: 77.5946,
+        createdAt: new Date().toISOString()
+      };
+
+      // Add to Firestore
+      console.log('Saving to database...', propertyData);
+      const docRef = await addDoc(collection(db, 'properties'), propertyData);
+      
+      console.log('Property added successfully with ID: ', docRef.id);
+      alert('Property listed successfully! Redirecting to properties page...');
+      
+      // Clear form
+      setFormData({
+        title: '',
+        price: '',
+        location: '',
+        bedrooms: '',
+        bathrooms: '',
+        area: '',
+        description: '',
+        image: null,
+        lat: '',
+        lng: ''
+      });
+      
+      // Redirect to properties page
+      setTimeout(() => {
+        navigate('/properties');
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error details:', error);
+      alert('Error adding property: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
-      <Threebackground />
+      <ThreeBackground />
       <div className="add-property">
         <h2>List Your Property</h2>
         <form onSubmit={handleSubmit} className="property-form">
@@ -188,8 +249,19 @@ function AddProperty() {
             </div>
           </div>
 
-          <button type="submit" className="submit-button">
-            List Property
+          <button 
+            type="submit" 
+            className="submit-button"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="loading-text">
+                <span className="loading-spinner"></span>
+                Listing Property...
+              </span>
+            ) : (
+              'List Property'
+            )}
           </button>
         </form>
       </div>

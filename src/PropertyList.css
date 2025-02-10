@@ -31,7 +31,7 @@
 
 .filters input:focus,
 .filters select:focus {
-  border-color: #52FFA8;
+  border-color: #58dafa;
   box-shadow: 0 0 0 2px rgba(82, 255, 168, 0.1);
 }
 
@@ -78,7 +78,7 @@
 .price {
   font-size: 1.4rem;
   font-weight: bold;
-  color: #52FFA8;
+  color:#58dafa;
   margin: 0.5rem 0;
 }
 
@@ -143,53 +143,107 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.filters-fixed {
+.filters-container {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  background: #1A1625;
+  background: rgba(26, 22, 37, 0.95);
   padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #52FFA8 #1A1625; /* Firefox */
+  box-shadow: 0 4px 20px rgba(157, 110, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
 
-/* Custom scrollbar for Webkit browsers */
-.filters-fixed::-webkit-scrollbar {
+.filters-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: scroll;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px; /* Space for scrollbar */
+}
+
+.filters-scroll::-webkit-scrollbar {
   height: 6px;
 }
 
-.filters-fixed::-webkit-scrollbar-track {
+.filters-scroll::-webkit-scrollbar-track {
   background: #1A1625;
+  border-radius: 3px;
 }
 
-.filters-fixed::-webkit-scrollbar-thumb {
-  background: #52FFA8;
+.filters-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
   border-radius: 3px;
 }
 
 .search-input, 
 .price-select {
-  flex-shrink: 0; /* Prevents the inputs from shrinking */
+  flex: 0 0 auto;
   min-width: 200px;
   padding: 0.8rem 1rem;
-  border: 1px solid rgba(82, 255, 168, 0.3);
+  border: 2px solid transparent;
+  background: 
+    linear-gradient(#13111C, #13111C) padding-box,
+    linear-gradient(45deg, #52FFA8, #9D6EFF) border-box;
   border-radius: 8px;
   font-size: 1rem;
-  background: #13111C;
   color: #ffffff;
+  margin-right: 10px;
 }
 
-.search-input:focus, 
+.search-input:focus,
 .price-select:focus {
-  border-color: #52FFA8;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(82, 255, 168, 0.1);
+  box-shadow: 0 0 15px rgba(82, 255, 168, 0.2);
+}
+
+.search-button {
+  flex: 0 0 auto;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.search-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 20px rgba(82, 255, 168, 0.3),
+    0 4px 20px rgba(157, 110, 255, 0.3);
+  background: linear-gradient(45deg, #5bffb0, #a77fff);
+}
+
+.search-button:active {
+  transform: translateY(0);
+}
+
+/* Property card styling updates */
+.property-card {
+  border: 2px solid transparent;
+  background: 
+    linear-gradient(#13111C, #13111C) padding-box,
+    linear-gradient(45deg, #52FFA8, #9D6EFF) border-box;
+  transition: all 0.3s ease;
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 8px 30px rgba(82, 255, 168, 0.15),
+    0 8px 30px rgba(157, 110, 255, 0.15);
+}
+
+.price {
+  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
 } 

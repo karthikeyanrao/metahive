@@ -23,7 +23,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <Link to="/">Stake and Buy</Link>
+        <Link to="/">Invest and Ingest</Link>
       </div>
       <div className="navbar-links">
         {currentUser ? (
@@ -38,7 +38,7 @@ function Navbar() {
               to="/add-property"
               className={location.pathname === '/add-property' ? 'active' : ''}
             >
-              List Property
+              Add Property
             </Link>
             <div className="account-section">
               <button onClick={connectWallet} className="connect-wallet-button">

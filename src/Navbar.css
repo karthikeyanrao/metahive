@@ -41,7 +41,7 @@
   text-decoration: none;
   letter-spacing: 2px;
   text-transform: uppercase;
-  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  background: linear-gradient(45deg, #005eff, #76ffe1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 20px rgba(82, 255, 168, 0.3);
@@ -49,7 +49,7 @@
 }
 
 .navbar-brand a:hover {
-  background: linear-gradient(45deg, #9D6EFF, #52FFA8);
+  background: linear-gradient(45deg, #005eff, #76ffe1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 30px rgba(82, 255, 168, 0.5);
@@ -76,7 +76,7 @@
 }
 
 .navbar-links a:hover {
-  color: #52FFA8;
+  color: #58dafa;
   border-color: rgba(82, 255, 168, 0.3);
   background: rgba(82, 255, 168, 0.1);
   transform: translateY(-2px);
@@ -106,11 +106,11 @@
 .navbar-links a.active {
   background: linear-gradient(45deg, rgba(82, 255, 168, 0.1), rgba(157, 110, 255, 0.1));
   border: 1px solid rgba(82, 255, 168, 0.3);
-  color: #52FFA8;
+  color: #58dafa;
 }
 
 .login-button {
-  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  background: linear-gradient(45deg, #005eff, #76ffe1);
   color: #13111C !important;
   padding: 0.6rem 1.5rem !important;
   border-radius: 20px;
@@ -124,12 +124,12 @@
 .login-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(82, 255, 168, 0.25);
-  background: linear-gradient(45deg, #9D6EFF, #52FFA8) !important;
+  background: linear-gradient(45deg, #005eff, #76ffe1) !important;
   color: white !important;
 }
 
 .login-button.active {
-  background: linear-gradient(45deg, #9D6EFF, #52FFA8);
+  background: linear-gradient(45deg, #005eff, #76ffe1);
   color: white !important;
 }
 
@@ -158,7 +158,7 @@
 }
 
 .connect-wallet-button {
-  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  background: linear-gradient(45deg, #005eff, #76ffe1);
   color: #13111C;
   padding: 0.6rem 1.5rem;
   border-radius: 20px;
@@ -173,14 +173,14 @@
 .connect-wallet-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(82, 255, 168, 0.25);
-  background: linear-gradient(45deg, #9D6EFF, #52FFA8);
+  background: linear-gradient(45deg, #005eff, #76ffe1);
   color: white;
 }
 
 .wallet-address {
   background: linear-gradient(45deg, rgba(82, 255, 168, 0.1), rgba(157, 110, 255, 0.1));
   border: 1px solid rgba(82, 255, 168, 0.3);
-  color: #52FFA8;
+  color: #58dafa;
   padding: 0.6rem 1.2rem;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -208,7 +208,7 @@
 .wallet-address {
   background: linear-gradient(45deg, rgba(82, 255, 168, 0.1), rgba(157, 110, 255, 0.1));
   border: 1px solid rgba(82, 255, 168, 0.3);
-  color: #52FFA8;
+  color: #58dafa;
   padding: 0.6rem 1.2rem;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -234,12 +234,12 @@
 
 .register-button {
   background: transparent;
-  color: #52FFA8 !important;
+  color: #58dafa !important;
   padding: 0.6rem 1.5rem !important;
   border-radius: 20px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  border: 2px solid #52FFA8;
+  border: 2px solid #3ff4f1;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }

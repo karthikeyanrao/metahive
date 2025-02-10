@@ -86,7 +86,7 @@
 }
 
 .thumbnail.active {
-  border-color: #52ffa8;
+  border-color:#58dafa;
   box-shadow: 0 0 15px rgba(82, 255, 168, 0.3);
 }
 
@@ -103,7 +103,7 @@
 }
 
 .highlights h3 {
-  color: #52ffa8;
+  color: #58dafa; 
   margin-bottom: 1rem;
   font-family: "Orbitron", sans-serif;
 }
@@ -124,7 +124,7 @@
   content: "→";
   position: absolute;
   left: 0;
-  color: #52ffa8;
+  color: #58dafa;
 }
 
 .property-sidebar {
@@ -147,7 +147,7 @@
 }
 
 .amenity-item i {
-  color: #52ffa8;
+  color: #58dafa;
 }
 
 .contact-section {
@@ -169,7 +169,7 @@
 
 .agent-avatar {
   font-size: 3rem;
-  color: #52ffa8;
+  color: #58dafa;
 }
 
 .agent-details h3 {
@@ -192,7 +192,7 @@
   background: rgba(82, 255, 168, 0.1);
   border: 1px solid rgba(82, 255, 168, 0.3);
   border-radius: 30px;
-  color: #52ffa8;
+  color: #58dafa;
   font-family: "Orbitron", sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
@@ -272,7 +272,7 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, #52ffa8, #9d6eff);
+  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -297,12 +297,12 @@
   justify-content: center;
   background: rgba(82, 255, 168, 0.1);
   border-radius: 12px;
-  color: #52ffa8;
+  color: #58dafa;
   transition: all 0.3s ease;
 }
 
 .feature-item:hover .feature-icon {
-  background: linear-gradient(45deg, #52ffa8, #9d6eff);
+  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
   color: #13111c;
   transform: rotate(360deg);
 }
@@ -315,7 +315,7 @@
 
 .feature-value {
   font-family: "Orbitron", sans-serif;
-  color: #52ffa8;
+  color: #58dafa;
   font-size: 1.2rem;
   margin-top: 0.3rem;
 }

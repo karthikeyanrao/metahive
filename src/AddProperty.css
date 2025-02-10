@@ -14,7 +14,8 @@
   font-weight: 800;
   margin-bottom: 2.5rem;
   text-align: center;
-  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  background: linear-gradient(45deg, #005eff, #76ffe1);
+
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -56,7 +57,7 @@
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: #52FFA8;
+  border-color:#58dafa;
   box-shadow: 0 0 0 3px rgba(82, 255, 168, 0.15);
   outline: none;
   transform: translateY(-2px);
@@ -102,7 +103,7 @@
 }
 
 .file-input-label:hover {
-  border-color: #52FFA8;
+  border-color:#58dafa;
   background: rgba(82, 255, 168, 0.05);
 }
 
@@ -112,26 +113,45 @@
 }
 
 .submit-button {
-  width: 100%;
-  padding: 1.2rem;
-  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+  background: linear-gradient(45deg, #001B48, #00FFC6);
+  color: white;
+  padding: 12px 24px;
   border: none;
-  border-radius: 12px;
-  color: #ffffff;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  letter-spacing: 1px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
   transition: all 0.3s ease;
-  margin-top: 2rem;
-  text-transform: uppercase;
 }
 
-.submit-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(82, 255, 168, 0.2);
-  background: linear-gradient(45deg, #9D6EFF, #52FFA8);
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 20px rgba(0, 27, 72, 0.3),
+    0 4px 20px rgba(0, 255, 198, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submit-button:disabled::after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 10px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -156,4 +176,27 @@
   width: 100%;
   height: 100%;
   z-index: 1;
+}
+
+.loading-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 } 

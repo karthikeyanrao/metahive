@@ -63,7 +63,7 @@ textarea {
 
 input:focus, textarea:focus {
   outline: none;
-  border-color: #52FFA8;
+  border-color:#58dafa;
   box-shadow: 0 0 0 2px rgba(82, 255, 168, 0.1);
 }
 
