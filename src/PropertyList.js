@@ -71,6 +71,10 @@ function PropertyList() {
     return matchesSearch && matchesPrice;
   });
 
+  const isSoldOut = (propertyId) => {
+    return localStorage.getItem(`property_${propertyId}_sold`) === 'true';
+  };
+
   return (
     <>
       <ThreeBackground />
@@ -110,7 +114,14 @@ function PropertyList() {
         <div className="properties-grid">
           {filteredProperties.map((property) => (
             <Link to={`/property/${property.id}`} key={property.id} className="property-card">
-              <img src={property.image} alt={property.title} />
+              <div className="property-image-container">
+                <img src={property.image} alt={property.title} />
+                {isSoldOut(property.id) && (
+                  <div className="sold-out-overlay">
+                    <span>SOLD OUT</span>
+                  </div>
+                )}
+              </div>
               <div className="property-info">
                 <h3>{property.title}</h3>
                 <p className="price">${property.price.toLocaleString()}</p>

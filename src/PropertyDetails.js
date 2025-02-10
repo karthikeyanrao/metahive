@@ -5,11 +5,16 @@ import ThreeBackground from './ThreeBackground';
 import { ethers } from 'ethers';
 import { useWeb3 } from './context/Web3Context'; // Make sure you have this context
 import { SENDER_ADDRESS, SENDER_ABI } from './contracts/SenderContract';
+import { useParams } from 'react-router-dom';
 
 function PropertyDetails() {
+  const { id } = useParams(); // Assuming you have a property ID from the URL
   const [selectedImage, setSelectedImage] = useState(null);
   const { isConnected, account } = useWeb3();
   const [paymentStatus, setPaymentStatus] = useState('');
+  const [isSold, setIsSold] = useState(() => {
+    return localStorage.getItem(`property_${id}_sold`) === 'true'
+  });
 
   const images = [
     { id: 1, url: home, alt: "Living Room" },
@@ -76,6 +81,9 @@ function PropertyDetails() {
       await tx.wait();
       
       setPaymentStatus(''); // Clear the status
+      setIsSold(true);  // Set the property as sold
+      // Store the sold status in localStorage
+      localStorage.setItem(`property_${id}_sold`, 'true');
       alert('Payment sent successfully!');
     } catch (error) {
       console.error('Payment error:', error);
@@ -214,12 +222,13 @@ function PropertyDetails() {
               Schedule Viewing
             </button>
             <button 
-              className="pay-button"
+              className={`pay-button ${isSold ? 'sold-out' : ''}`}
               onClick={handlePayment}
-              disabled={!isConnected}
+              disabled={!isConnected || isSold}
+              style={{ cursor: isSold ? 'not-allowed' : 'pointer' }}
             >
               <i className="fas fa-credit-card"></i>
-              Pay Now
+              {isSold ? 'Sold Out' : 'Pay Now'}
             </button>
             {paymentStatus && (
               <div className={`payment-status ${paymentStatus.includes('failed') ? 'error' : ''}`}>
