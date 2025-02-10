@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db, storage } from "./context/firebase"; // Include initialized Firestore and Storage instances
+import { doc, setDoc } from "firebase/firestore"; // Firestore functions
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Firebase Storage functions
 import './BuyerRegistration.css';
+import ThreeBackground from './ThreeBackground';
 
 function BuyerRegistration() {
   const [formData, setFormData] = useState({
@@ -9,10 +14,13 @@ function BuyerRegistration() {
     email: '',
     phone: '',
     address: '',
-    occupation: '',
+    password: '',
     annualIncome: '',
     panNumber: ''
   });
+
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,16 +37,78 @@ function BuyerRegistration() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+    try {
+      // Step 1: Create user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      const user = userCredential.user;
+
+      // Step 2: Upload Aadhar Proof to Firebase Storage (if file exists)
+      let aadharProofURL = null;
+      if (formData.aadharProof) {
+        const aadharProofRef = ref(storage, `aadharProofs/${user.uid}_${formData.aadharProof.name}`);
+        await uploadBytes(aadharProofRef, formData.aadharProof);
+        aadharProofURL = await getDownloadURL(aadharProofRef);
+      }
+      
+      // Step 3: Save additional details in Firestore
+      const buyerData = {
+        fullName: formData.fullName,
+        aadharId: formData.aadharId,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        annualIncome: formData.annualIncome,
+        panNumber: formData.panNumber,
+        aadharProofURL, // Will be null if no file was uploaded
+        registrationDate: new Date().toISOString(),
+        userId: user.uid
+      };
+
+      // Save to Firestore
+      await setDoc(doc(db, "buyers", user.uid), buyerData);
+
+      setSuccess(`Buyer registered successfully! Welcome, ${formData.fullName}`);
+      setError(null);
+      
+      // Clear form after successful registration
+      setFormData({
+        fullName: '',
+        aadharId: '',
+        aadharProof: null,
+        email: '',
+        phone: '',
+        address: '',
+        password: '',
+        annualIncome: '',
+        panNumber: ''
+      });
+
+    } catch (err) {
+      setError(err.message);
+      setSuccess(null);
+      console.error("Error during registration:", err);
+    }
   };
 
   return (
+    <div>
+    <ThreeBackground />
     <div className="buyer-registration">
       <div className="registration-container">
         <h1>Buyer Registration</h1>
+        {error && <div className="error-message">{error}</div>}
+        {success && (
+          <div className="success-message">
+            <span role="img" aria-label="success">✅</span> {success}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Full Name *</label>
@@ -83,12 +153,12 @@ function BuyerRegistration() {
           </div>
 
           <div className="form-group">
-            <label>Aadhar Card Proof *</label>
+            <label>Aadhar Card Proof </label>
             <input
               type="file"
               name="aadharProof"
               onChange={handleFileChange}
-              required
+              
               accept=".pdf,.jpg,.jpeg,.png"
               className="file-input"
             />
@@ -136,14 +206,14 @@ function BuyerRegistration() {
 
           <div className="form-row">
             <div className="form-group">
-              <label>Occupation *</label>
+              <label>Password *</label>
               <input
-                type="text"
-                name="occupation"
-                value={formData.occupation}
+                type="password"
+                name="password"
+                value={formData.password}
                 onChange={handleInputChange}
                 required
-                placeholder="Enter your occupation"
+                placeholder="Enter your password"
               />
             </div>
 
@@ -167,7 +237,8 @@ function BuyerRegistration() {
         </form>
       </div>
     </div>
+    </div>
   );
 }
 
-export default BuyerRegistration; 
+export default BuyerRegistration;

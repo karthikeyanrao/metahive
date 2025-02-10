@@ -35,6 +35,16 @@ function PropertyList() {
         area: 1200,
         image: image1,
       },
+      {
+        id: 4,
+        title: 'Modern Downtown Apartment',
+        price: 450000,
+        location: 'Downtown',
+        bedrooms: 2,
+        bathrooms: 2,
+        area: 1200,
+        image: image1,
+      },
     // Add more sample properties
   ]);
 

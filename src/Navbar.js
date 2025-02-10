@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useWeb3 } from './context/Web3Context';
+import { useAuth } from './context/AuthContext';
 import './Navbar.css';
 
 function Navbar() {
   const location = useLocation();
   const { isConnected, connectWallet, disconnectWallet, account } = useWeb3();
+  const { currentUser, logout } = useAuth();
   const [showRegisterDropdown, setShowRegisterDropdown] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -14,7 +26,7 @@ function Navbar() {
         <Link to="/">Stake and Buy</Link>
       </div>
       <div className="navbar-links">
-        {isConnected ? (
+        {currentUser ? (
           <>
             <Link 
               to="/properties" 
@@ -29,10 +41,13 @@ function Navbar() {
               List Property
             </Link>
             <div className="account-section">
-              <span className="wallet-address">
-                {account?.slice(0, 6)}...{account?.slice(-4)}
-              </span>
-              <button onClick={disconnectWallet} className="login-button">
+              <button onClick={connectWallet} className="connect-wallet-button">
+                {isConnected ? 
+                  `${account?.slice(0, 6)}...${account?.slice(-4)}` : 
+                  'Connect Wallet'
+                }
+              </button>
+              <button onClick={handleLogout} className="login-button">
                 Logout
               </button>
             </div>
@@ -54,8 +69,11 @@ function Navbar() {
                 )}
               </button>
             </div>
+            <Link to="/login" className="login-nav-button">
+              Login 
+            </Link>
             <button onClick={connectWallet} className="login-button">
-              Login with Wallet
+              Connect with Wallet
             </button>
           </div>
         )}

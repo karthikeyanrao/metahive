@@ -1,7 +1,9 @@
 .builder-registration {
   min-height: 100vh;
   padding: 100px 20px 60px;
-  background: rgba(19, 17, 28, 0.95);
+  background: inherit;
+  position: relative;
+  z-index: 1;
 }
 
 .registration-container {
@@ -12,6 +14,8 @@
   border-radius: 20px;
   border: 1px solid rgba(82, 255, 168, 0.1);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
 }
 
 .registration-container h1 {
@@ -107,4 +111,14 @@ small {
   .registration-container h1 {
     font-size: 2rem;
   }
+}
+
+/* Add styles for ThreeBackground */
+.three-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 } 

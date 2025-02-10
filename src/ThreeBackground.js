@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-function ThreeBackground() {
+const ThreeBackground = () => {
   const mountRef = useRef(null);
 
   useEffect(() => {
@@ -112,11 +112,12 @@ function ThreeBackground() {
         left: 0,
         width: '100%',
         height: '100%',
-        zIndex: -1,
-        background: 'linear-gradient(135deg, #13111C 0%, #1A1625 50%, #13111C 100%)'
+        zIndex: 0,
+        background: 'linear-gradient(135deg, #13111C 0%, #1A1625 50%, #13111C 100%)',
+        pointerEvents: 'none'
       }}
     />
   );
-}
+};
 
 export default ThreeBackground; 
