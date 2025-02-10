@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PropertyDetails.css";
 import home from "./home.png";
 import ThreeBackground from './ThreeBackground';
@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import { useWeb3 } from './context/Web3Context'; // Make sure you have this context
 import { SENDER_ADDRESS, SENDER_ABI } from './contracts/SenderContract';
 import { useParams } from 'react-router-dom';
+import BuildingBadge from './BuildingBadge';
 
 function PropertyDetails() {
   const { id } = useParams(); // Assuming you have a property ID from the URL
@@ -15,6 +16,8 @@ function PropertyDetails() {
   const [isSold, setIsSold] = useState(() => {
     return localStorage.getItem(`property_${id}_sold`) === 'true'
   });
+  const [property, setProperty] = useState(null);
+  const NFT_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Your deployed contract address
 
   const images = [
     { id: 1, url: home, alt: "Living Room" },
@@ -103,8 +106,12 @@ function PropertyDetails() {
   return (
     <>
       <ThreeBackground />
-      <div className="property-details">
+      <div className={`property-details ${isSold ? 'sold-out' : ''}`}>
         <div className="property-header">
+          {/* Back Button */}
+          <button className="back-button" onClick={() => window.history.back()}>
+            Back
+          </button>
           <div className="header-content">
             <h1 className="property-title">Luxury Penthouse Suite</h1>
             <div className="property-meta">
@@ -112,27 +119,36 @@ function PropertyDetails() {
                 <i className="fas fa-map-marker-alt"></i>
                 Downtown, Metropolis
               </div>
-              <div className="property-price">$5000,000</div>
+              <div className="property-price">
+                {isSold ? (
+                  <span className="sold-out-price">SOLD OUT</span>
+                ) : (
+                  '$5000,000'
+                )}
+              </div>
             </div>
             <div className="property-tags">
               <span className="tag">Premium</span>
               <span className="tag">Verified</span>
-              <span className="tag">New</span>
+              {isSold && <span className="tag sold">Sold Out</span>}
             </div>
           </div>
         </div>
 
-        <div className="gallery-container">
+        <div className={`gallery-container ${isSold ? 'sold-out' : ''}`}>
           <div className="main-image">
             <img src={selectedImage || images[0].url} alt="Main view" />
+            {isSold && (
+              <div className="sold-out-overlay">
+                <span>SOLD OUT</span>
+              </div>
+            )}
           </div>
           <div className="gallery-thumbnails">
             {images.map((image) => (
               <div
                 key={image.id}
-                className={`thumbnail ${
-                  selectedImage === image.url ? "active" : ""
-                }`}
+                className={`thumbnail ${selectedImage === image.url ? "active" : ""} ${isSold ? 'sold-out' : ''}`}
                 onClick={() => setSelectedImage(image.url)}
               >
                 <img src={image.url} alt={image.alt} />
@@ -141,7 +157,7 @@ function PropertyDetails() {
           </div>
         </div>
 
-        <div className="property-details-grid">
+        <div className={`property-details-grid ${isSold ? 'sold-out' : ''}`}>
           <div className="property-description">
             <h2 className="description-title">About this property</h2>
             <div className="description-content">
@@ -202,7 +218,7 @@ function PropertyDetails() {
           </div>
         </div>
 
-        <div className="contact-section">
+        <div className={`contact-section ${isSold ? 'sold-out' : ''}`}>
           <div className="agent-info">
             <div className="agent-avatar">
               <i className="fas fa-user-circle"></i>
@@ -213,11 +229,11 @@ function PropertyDetails() {
             </div>
           </div>
           <div className="contact-buttons">
-            <button className="contact-button">
+            <button className="contact-button" disabled={isSold}>
               <i className="fas fa-phone-alt"></i>
-              Contact Agent
+              Contact Builder
             </button>
-            <button className="schedule-button">
+            <button className="schedule-button" disabled={isSold}>
               <i className="fas fa-calendar-alt"></i>
               Schedule Viewing
             </button>
@@ -225,7 +241,6 @@ function PropertyDetails() {
               className={`pay-button ${isSold ? 'sold-out' : ''}`}
               onClick={handlePayment}
               disabled={!isConnected || isSold}
-              style={{ cursor: isSold ? 'not-allowed' : 'pointer' }}
             >
               <i className="fas fa-credit-card"></i>
               {isSold ? 'Sold Out' : 'Pay Now'}
@@ -236,6 +251,15 @@ function PropertyDetails() {
               </div>
             )}
           </div>
+        </div>
+
+        <div className={`verification-section ${isSold ? 'sold-out' : ''}`}>
+          <h2>Property Verification</h2>
+          <BuildingBadge 
+            contractAddress={NFT_CONTRACT_ADDRESS}
+            tokenId={0}
+            isSold={isSold}
+          />
         </div>
       </div>
     </>

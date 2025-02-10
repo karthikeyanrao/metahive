@@ -80,6 +80,10 @@ function AddProperty() {
     <>
       <ThreeBackground />
       <div className="add-property">
+        {/* Back Button */}
+        <button className="back-button" onClick={() => window.history.back()}>
+           Back
+        </button>
         <h2>List Your Property</h2>
         <form onSubmit={handleSubmit} className="property-form">
           <div className="form-group">

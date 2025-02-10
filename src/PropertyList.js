@@ -26,10 +26,9 @@ function PropertyList() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('all');
-  const [isClient, setIsClient] = useState(false);
+  const [visibleMap, setVisibleMap] = useState(null);
 
   useEffect(() => {
-    setIsClient(true);
     fetchProperties();
   }, []);
 
@@ -44,12 +43,11 @@ function PropertyList() {
         image: image1, // Default image
       }));
 
-     setProperties(prev => {
-  const existingIds = new Set(prev.map(p => p.id));
-  const newProperties = firestoreProperties.filter(p => !existingIds.has(p.id));
-  return [...prev, ...newProperties];
-});
-
+      setProperties(prev => {
+        const existingIds = new Set(prev.map(p => p.id));
+        const newProperties = firestoreProperties.filter(p => !existingIds.has(p.id));
+        return [...prev, ...newProperties];
+      });
     } catch (error) {
       console.error('Error fetching properties:', error);
     }
@@ -71,14 +69,18 @@ function PropertyList() {
     return matchesSearch && matchesPrice;
   });
 
-  const isSoldOut = (propertyId) => {
-    return localStorage.getItem(`property_${propertyId}_sold`) === 'true';
+  const toggleMap = (propertyId) => {
+    setVisibleMap(visibleMap === propertyId ? null : propertyId);
   };
 
   return (
     <>
       <ThreeBackground />
       <div className="property-list">
+        {/* Back Button */}
+        <button className="back-button" onClick={() => window.history.back()}>
+           Back
+        </button>
         <div className="filters">
           <input
             type="text"
@@ -94,41 +96,39 @@ function PropertyList() {
           </select>
         </div>
 
-        {isClient && (
-          <div style={{ height: '500px', width: '100%' }}>
-            <MapContainer center={[12.9716, 77.5946]} zoom={13} style={{ height: '50%', width: '40%' , marginLeft: '10px'}}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              {filteredProperties.map((property) => (
-                <Marker key={property.id} position={[property.lat, property.lng]} icon={redMarker}>
-                  <Popup>
-                    <b>{property.title}</b><br />
-                    {property.location}<br />
-                    ${property.price.toLocaleString()}
-                  </Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          </div>
-        )}
-
         <div className="properties-grid">
           {filteredProperties.map((property) => (
-            <Link to={`/property/${property.id}`} key={property.id} className="property-card">
-              <div className="property-image-container">
-                <img src={property.image} alt={property.title} />
-                {isSoldOut(property.id) && (
-                  <div className="sold-out-overlay">
-                    <span>SOLD OUT</span>
-                  </div>
-                )}
-              </div>
-              <div className="property-info">
-                <h3>{property.title}</h3>
-                <p className="price">${property.price.toLocaleString()}</p>
-                <p className="details">{property.bedrooms} beds • {property.bathrooms} baths • {property.area} sqft</p>
-                <p className="location">{property.location}</p>
-              </div>
-            </Link>
+            <div key={property.id} className="property-card">
+              <Link to={`/property/${property.id}`} className="property-link">
+                <div className="property-image-container">
+                  <img src={property.image} alt={property.title} />
+                </div>
+                <div className="property-info">
+                  <h3>{property.title}</h3>
+                  <p className="price">${property.price.toLocaleString()}</p>
+                  <p className="details">{property.bedrooms} beds • {property.bathrooms} baths • {property.area} sqft</p>
+                </div>
+              </Link>
+              <p className="location">
+                <span
+                  className="location-marker"
+                  onClick={() => toggleMap(property.id)}
+                  style={{ cursor: 'pointer' }}
+                >
+                    {property.location}
+                </span>
+              </p>
+              {visibleMap === property.id && (
+                <div className="mini-map">
+                  <MapContainer center={[property.lat, property.lng]} zoom={13} style={{ height: '200px', width: '100%' }}>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={[property.lat, property.lng]} icon={redMarker}>
+                      <Popup>{property.title}</Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>

@@ -89,7 +89,7 @@
 }
 
 .location {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 0, 0, 0.6);
   font-size: 0.9rem;
   margin: 0.5rem 0;
   display: flex;
@@ -98,7 +98,8 @@
 }
 
 .location::before {
-  content: "📍";
+  margin-left: 1rem;
+  content: "📍"; 
 }
 
 @media (max-width: 768px) {
@@ -284,6 +285,10 @@
   }
 }
 
+.location-marker {
+  font-size: 1rem;
+  color: #a4d8e5;
+}
 .properties-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -356,3 +361,50 @@
   transform: rotate(-15deg);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 } 
+
+.back-button {
+  display: inline-block;
+  padding: 0.4rem 1.6rem; /* Adjusted for balanced proportions */
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #13111C;
+  background: linear-gradient(45deg, #005eff, #76ffe1) !important; /* Bluish-green gradient */
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(82, 255, 168, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Space between icon and text */
+  margin-left: 40px; /* Adjust value as needed */
+
+}
+
+.back-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(82, 255, 168, 0.3);
+  background: linear-gradient(45deg, #5883fa, #15e7e7) !important;
+ /* Gradient transition */
+  color: white;
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
+
+.back-button::before {
+
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+}

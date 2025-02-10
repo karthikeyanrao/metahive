@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useWeb3 } from './context/Web3Context';
 import { useAuth } from './context/AuthContext';
+import { ethers } from 'ethers';
 import './Navbar.css';
 
 function Navbar() {
@@ -9,7 +10,25 @@ function Navbar() {
   const { isConnected, connectWallet, disconnectWallet, account } = useWeb3();
   const { currentUser, logout } = useAuth();
   const [showRegisterDropdown, setShowRegisterDropdown] = useState(false);
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (isConnected && account) {
+        try {
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          const balance = await provider.getBalance(account);
+          setWalletBalance(ethers.formatEther(balance));
+        } catch (error) {
+          console.error('Error fetching balance:', error);
+        }
+      }
+    };
+
+    fetchBalance();
+  }, [isConnected, account]);
 
   const handleLogout = async () => {
     try {
@@ -18,6 +37,10 @@ function Navbar() {
     } catch (error) {
       console.error('Logout error:', error);
     }
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/settings');
   };
 
   return (
@@ -34,22 +57,54 @@ function Navbar() {
             >
               Browse Properties
             </Link>
-            <Link 
-              to="/add-property"
-              className={location.pathname === '/add-property' ? 'active' : ''}
-            >
-              Add Property
-            </Link>
+            
             <div className="account-section">
-              <button onClick={connectWallet} className="connect-wallet-button">
-                {isConnected ? 
-                  `${account?.slice(0, 6)}...${account?.slice(-4)}` : 
-                  'Connect Wallet'
-                }
-              </button>
-              <button onClick={handleLogout} className="login-button">
-                Logout
-              </button>
+              <div className="wallet-container">
+                <button 
+                  onClick={() => setShowWalletDropdown(!showWalletDropdown)} 
+                  className="wallet-button"
+                >
+                  {isConnected ? (
+                    <>
+                      <i className="fas fa-wallet"></i>
+                      <span>{`${account?.slice(0, 6)}...${account?.slice(-4)}`}</span>
+                      <i className="fas fa-chevron-down"></i>
+                    </>
+                  ) : (
+                    <span onClick={connectWallet}>Connect Wallet</span>
+                  )}
+                </button>
+                
+                {showWalletDropdown && isConnected && (
+                  <div className="wallet-dropdown">
+                    <div className="wallet-info">
+                      <div className="wallet-address">
+                        <span>Address:</span>
+                        <span>{`${account?.slice(0, 6)}...${account?.slice(-4)}`}</span>
+                      </div>
+                      <div className="wallet-balance">
+                        <span>Balance:</span>
+                        <span>{walletBalance ? `${Number(walletBalance).toFixed(4)} ETH` : 'Loading...'}</span>
+                      </div>
+                      <button onClick={disconnectWallet} className="disconnect-button">
+                        Disconnect Wallet
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="user-profile">
+                <button 
+                  className="avatar-button"
+                  onClick={handleSettingsClick}
+                >
+                  <i className="fas fa-user-circle"></i>
+                </button>
+                <button onClick={handleLogout} className="logout-button">
+                  Logout
+                </button>
+              </div>
             </div>
           </>
         ) : (

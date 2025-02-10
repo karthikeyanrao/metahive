@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ThreeBackground from './ThreeBackground';
+import Footer from './Footer';
 import './Home.css';
 
 function Home() {
@@ -8,13 +9,13 @@ function Home() {
     <div className="home">
       <ThreeBackground />
       <section className="hero-section">
-        <h1>The Future of LifeScapes</h1>
+        <h1>The Future of MetaHive</h1>
         <p>
-        Find properties so extraordinary, even your dream home will do a double take. 
-        Your future address is chilling in our curated collection—go say hi!
+        Discover properties so extraordinary that even your dream home will take a second look.  
+        Your future address is waiting in our curated collection—go explore!
         </p>
         <Link to="/properties" className="cta-button">
-          Explore Properties
+          Explore Buildings
         </Link>
       </section>
 
@@ -22,22 +23,23 @@ function Home() {
         <h2>Why Choose Us</h2>
         <div className="features-grid">
           <div className="feature-card">
-            <i className="fas fa-building"></i>
-            <h3>Premium Selection</h3>
-            <p>Access to exclusive properties and luxury real estate options tailored to your preferences.</p>
+            <i className="fas fa-file-contract"></i>
+            <h3>Smart Contracts</h3>
+            <p>Automated, secure, and trustless transactions powered by blockchain technology for seamless property dealings.</p>
           </div>
           <div className="feature-card">
-            <i className="fas fa-shield-alt"></i>
-            <h3>Secure Transactions</h3>
-            <p>Advanced blockchain technology ensuring safe and transparent property dealings.</p>
+            <i className="fas fa-cube"></i>
+            <h3>NFT Integration</h3>
+            <p>Unique digital property tokens ensuring authentic ownership and enabling fractional real estate investment.</p>
           </div>
           <div className="feature-card">
-            <i className="fas fa-chart-line"></i>
-            <h3>Smart Investment</h3>
-            <p>Data-driven insights and market analysis to make informed investment decisions.</p>
+            <i className="fas fa-layer-group"></i>
+            <h3>Transparency</h3>
+            <p>Complete visibility of property history, ownership, and transactions through immutable blockchain records.</p>
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }
