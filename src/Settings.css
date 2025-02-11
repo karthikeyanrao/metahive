@@ -109,7 +109,7 @@
 }
 
 .save-button {
-  background: #4CAF50;
+  background: linear-gradient(45deg,#9D6EFF, #52FFA8 );
   color: white;
   border: none;
   padding: 1rem;
@@ -120,7 +120,7 @@
 }
 
 .save-button:hover {
-  background: #45a049;
+  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
 }
 
 .disabled-input, .readonly-input {
