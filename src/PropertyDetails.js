@@ -10,6 +10,11 @@ import { db } from "./context/firebase"; // Ensure db is properly exported
 import { doc, deleteDoc } from "firebase/firestore";  
 import BuildingBadge from './BuildingBadge';
 
+import b1 from './b1.jpg';
+import b2 from './b2.jpg';
+import be1 from './be1.jpg';
+import k1 from './k1.jpg';
+
 
 function PropertyDetails() {
   const [showAgentPopup, setShowAgentPopup] = useState(false);
@@ -41,13 +46,13 @@ function PropertyDetails() {
       }
     }
   };
-
+ 
   // Rest of your existing constants (images, features, amenities)
   const images = [
-    { id: 1, url: home, alt: "Living Room" },
-    { id: 2, url: home, alt: "Kitchen" },
-    { id: 3, url: home, alt: "Master Bedroom" },
-    { id: 4, url: home, alt: "Bathroom" },
+    { id: 1, url:be1 , alt: "Living Room" },
+    { id: 2, url:k1 , alt: "Kitchen" },
+    { id: 3, url: b1, alt: "Master Bedroom" },
+    { id: 4, url: b2, alt: "Bathroom" },
   ];
 
   const features = {

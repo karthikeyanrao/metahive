@@ -9,6 +9,11 @@ import image1 from './home.png';
 import './PropertyList.css';
 import ThreeBackground from './ThreeBackground';
 
+
+import img6 from './img6.jpg';
+import img7 from './img7.jpg';
+
+
 // Red marker icon
 const redMarker = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/128/684/684908.png',
@@ -19,10 +24,10 @@ const redMarker = new L.Icon({
 
 function PropertyList() {
   const [properties, setProperties] = useState([
-    { id: 1, title: 'Modern Downtown Apartment', price: 450000, location: 'Church Street, Bangalore', bedrooms: 2, bathrooms: 2, area: 1200, lat: 12.9758, lng: 77.6095, image: image1 },
-    { id: 2, title: 'Luxury Condo', price: 650000, location: 'Indiranagar, Bangalore', bedrooms: 3, bathrooms: 2, area: 1500, lat: 12.9716, lng: 77.6412, image: image1 },
-    { id: 3, title: 'Stylish Loft', price: 850000, location: 'Whitefield, Bangalore', bedrooms: 4, bathrooms: 3, area: 1800, lat: 12.9698, lng: 77.7499, image: image1 },
+     
   ]);
+
+
 
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('all');
