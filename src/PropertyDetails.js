@@ -8,6 +8,8 @@ import { SENDER_ADDRESS, SENDER_ABI } from './contracts/SenderContract';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from "./context/firebase"; // Ensure db is properly exported
 import { doc, deleteDoc } from "firebase/firestore";  
+import BuildingBadge from './BuildingBadge';
+
 
 function PropertyDetails() {
   const [showAgentPopup, setShowAgentPopup] = useState(false);
@@ -19,6 +21,8 @@ function PropertyDetails() {
   const [isSold, setIsSold] = useState(() => {
     return localStorage.getItem(`property_${id}_sold`) === 'true'
   });
+  const [property, setProperty] = useState(null);
+  const NFT_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
   const toggleAgentPopup = () => {
     setShowAgentPopup(!showAgentPopup);
@@ -118,7 +122,7 @@ function PropertyDetails() {
   return (
     <>
       <ThreeBackground />
-      <div className="property-details">
+      <div className={`property-details ${isSold ? 'sold-out' : ''}`}>
         <div className="property-header">
           <div className="header-content">
             <h1 className="property-title">Luxury Penthouse Suite</h1>
@@ -165,9 +169,65 @@ function PropertyDetails() {
           </div>
         </div>
 
-        {/* Rest of your existing JSX structure */}
         <div className="property-details-grid">
-          {/* ... (keeping all the existing content) ... */}
+          <div className="property-description">
+            <h2 className="description-title">About this property</h2>
+            <div className="description-content">
+              <p>
+                Experience luxury living at its finest in this stunning penthouse
+                suite. Featuring breathtaking city views, premium finishes, and
+                state-of-the-art amenities, this property represents the pinnacle
+                of urban sophistication.
+              </p>
+              <div className="highlights">
+                <h3>Property Highlights</h3>
+                <ul>
+                  <li>Floor-to-ceiling windows with panoramic views</li>
+                  <li>Custom Italian kitchen with premium appliances</li>
+                  <li>Private elevator access</li>
+                  <li>Smart home automation system</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="property-sidebar">
+            <div className="features-section">
+              <h2 className="features-title">Property Features</h2>
+              {Object.entries(features).map(([category, items]) => (
+                <div key={category} className="feature-category">
+                  <h3 className="category-title">
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </h3>
+                  <div className="features-list">
+                    {items.map((feature, index) => (
+                      <div key={index} className="feature-item">
+                        <div className="feature-icon">
+                          <i className={`fas ${feature.icon}`}></i>
+                        </div>
+                        <div className="feature-content">
+                          <div className="feature-text">{feature.text}</div>
+                          <div className="feature-value">{feature.value}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="amenities-section">
+              <h2 className="features-title">Amenities</h2>
+              <div className="amenities-list">
+                {amenities.map((amenity, index) => (
+                  <div key={index} className="amenity-item">
+                    <i className="fas fa-check"></i>
+                    <span>{amenity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="contact-section">
@@ -239,9 +299,20 @@ function PropertyDetails() {
             </div>
           </>
         )}
+         <div className={`verification-section ${isSold ? 'sold-out' : ''}`}>
+          <h2>Property Verification</h2>
+          <BuildingBadge 
+            contractAddress={NFT_CONTRACT_ADDRESS}
+            tokenId={0}
+            isSold={isSold}
+          />
+        </div>
+        
       </div>
     </>
   );
 }
 
 export default PropertyDetails;
+
+

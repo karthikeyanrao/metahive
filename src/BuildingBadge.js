@@ -45,7 +45,7 @@ const NFT_ABI = [
   }
 ];
 
-function BuildingBadge({ contractAddress, tokenId }) {
+function BuildingBadge({ contractAddress, tokenId, isSoldOut }) {
   const [badgeDetails, setBadgeDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -221,8 +221,8 @@ function BuildingBadge({ contractAddress, tokenId }) {
   }
 
   return (
-    <div className="building-badge">
-      {!badgeDetails && !showMintForm && (
+    <div className={`building-badge ${isSoldOut ? 'sold-out' : ''}`}>
+      {!badgeDetails && !showMintForm && !isSoldOut && (
         <div className="mint-section">
           <button 
             className="mint-button" 
@@ -230,6 +230,15 @@ function BuildingBadge({ contractAddress, tokenId }) {
           >
             Mint New Badge
           </button>
+        </div>
+      )}
+
+      {!badgeDetails && !showMintForm && isSoldOut && (
+        <div className="sold-out-section">
+          <div className="sold-out-badge">
+            <i className="fas fa-check-circle"></i>
+            <span>Sold Out</span>
+          </div>
         </div>
       )}
 
@@ -304,12 +313,19 @@ function BuildingBadge({ contractAddress, tokenId }) {
       )}
 
       {badgeDetails && (
-        <div className="badge-container">
+        <div className={`badge-container ${isSoldOut ? 'sold-out' : ''}`}>
           <div className="badge-header">
             <h3>MetaHive Verification Badge</h3>
-            <div className="verified-stamp">
-              <i className="fas fa-check-circle"></i> Verified
-            </div>
+            {isSoldOut && (
+              <div className="sold-out-stamp">
+                <i className="fas fa-check-circle"></i> Sold Out
+              </div>
+            )}
+            {badgeDetails.isVerified && (
+              <div className="verified-stamp">
+                <i className="fas fa-check-circle"></i> Verified
+              </div>
+            )}
           </div>
           
           <div className="badge-content">

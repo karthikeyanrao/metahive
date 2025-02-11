@@ -547,7 +547,7 @@
 }
 
 .tag.sold {
-  background-color: red;
+  background-color: rgb(252, 4, 4);
   color: white;
 }
 
@@ -578,6 +578,6 @@
 }
 
 .sold-out {
-  background-color: #dc3545 !important;
+
   color: white !important;
 }
