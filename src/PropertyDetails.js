@@ -6,8 +6,9 @@ import { ethers } from 'ethers';
 import { useWeb3 } from './context/Web3Context';
 import { SENDER_ADDRESS, SENDER_ABI } from './contracts/SenderContract';
 import { useParams, useNavigate } from 'react-router-dom';
-//import { doc, deleteDoc } from './context/firebase';  
-//import { db } from './context/firebase';
+import { db } from "./context/firebase"; // Ensure db is properly exported
+import { doc, deleteDoc } from "firebase/firestore";  
+
 function PropertyDetails() {
   const [showAgentPopup, setShowAgentPopup] = useState(false);
   const navigate = useNavigate();
