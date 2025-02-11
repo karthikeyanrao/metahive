@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext';
 import { ethers } from 'ethers';
 import './Navbar.css';
 import meta from './meta.png';
+import user from './user.png';
 
 function Navbar() {
   const location = useLocation();
@@ -102,7 +103,7 @@ function Navbar() {
                   onClick={handleSettingsClick}
                 >
                   <i className="fas fa-user-circle"></i>
-                  <img src={meta}  className="wallet-avatar" />
+                  <img src={user}  className="wallet-avatar" />
                 </button>
                 <button onClick={handleLogout} className="logout-button">
                   Logout

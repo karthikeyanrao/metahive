@@ -9,10 +9,11 @@ import image1 from './home.png';
 import './PropertyList.css';
 import ThreeBackground from './ThreeBackground';
 
-
+import img1 from './img1.jpg';
+import img2 from './img2.jpg';
+import img3 from './img3.jpg';
+import img4 from './img4.jpg';
 import img6 from './img6.jpg';
-import img7 from './img7.jpg';
-
 
 // Red marker icon
 const redMarker = new L.Icon({
@@ -23,14 +24,10 @@ const redMarker = new L.Icon({
 });
 
 function PropertyList() {
-  const [properties, setProperties] = useState([
-     
-  ]);
-
-
-
+  const [properties, setProperties] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('all');
+  const [sortOrder, setSortOrder] = useState('none');
   const [visibleMap, setVisibleMap] = useState(null);
 
   useEffect(() => {
@@ -42,50 +39,49 @@ function PropertyList() {
       const querySnapshot = await getDocs(collection(db, 'properties'));
       const firestoreProperties = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-        
-        // Maintain exact lat/lng from Firestore
-        const latitude = data.lat !== undefined ? data.lat : 12.9716; // Default: Bangalore
-        const longitude = data.lng !== undefined ? data.lng : 77.5946; // Default: Bangalore
+        const latitude = data.lat !== undefined ? data.lat : 12.9716;
+        const longitude = data.lng !== undefined ? data.lng : 77.5946;
 
         return {
           id: doc.id,
           ...data,
           lat: latitude,
           lng: longitude,
-          image: image1, // Default image
+          images: [img1, img2, img3, img4, img6],
+          randomImage: [img1, img2, img3, img4, img6][Math.floor(Math.random() * 5)],
         };
       });
 
-      setProperties((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id));
-        const newProperties = firestoreProperties.filter((p) => !existingIds.has(p.id));
-        return [...prev, ...newProperties];
-      });
+      setProperties(firestoreProperties);
     } catch (error) {
       console.error('Error fetching properties:', error);
     }
   };
 
-  const filteredProperties = properties.filter((property) => {
-    const matchesSearch =
-      property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.location.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProperties = properties
+    .filter((property) => {
+      const matchesSearch =
+        property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-    let matchesPrice = true;
-    if (priceRange === 'low') {
-      matchesPrice = property.price <= 200000;
-    } else if (priceRange === 'mid') {
-      matchesPrice = property.price > 200000 && property.price <= 500000;
-    } else if (priceRange === 'high') {
-      matchesPrice = property.price > 500000;
-    } else if (priceRange === 'rent') {
-      matchesPrice = property.type === 'rent';
-    } else if (priceRange === 'sale') {
-      matchesPrice = property.type === 'sale';
-    }
-
-    return matchesSearch && matchesPrice;
-  });
+      let matchesPrice = true;
+      if (priceRange === 'low') {
+        matchesPrice = property.price <= 200000;
+      } else if (priceRange === 'mid') {
+        matchesPrice = property.price > 200000 && property.price <= 500000;
+      } else if (priceRange === 'high') {
+        matchesPrice = property.price > 500000;
+      }
+      return matchesSearch && matchesPrice;
+    })
+    .sort((a, b) => {
+      if (sortOrder === 'Low') {
+        return a.price - b.price;
+      } else if (sortOrder === 'High') {
+        return b.price - a.price;
+      }
+      return 0;
+    });
 
   const toggleMap = (propertyId) => {
     setVisibleMap(visibleMap === propertyId ? null : propertyId);
@@ -95,12 +91,11 @@ function PropertyList() {
     <>
       <ThreeBackground />
       <div className="property-list">
-        {/* Back Button */}
         <button className="back-button" onClick={() => window.history.back()}>
           Back
         </button>
 
-        <div className="filters">
+        <div className="filters" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <input
             type="text"
             placeholder="Search by title or location..."
@@ -108,12 +103,15 @@ function PropertyList() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <select onChange={(e) => setPriceRange(e.target.value)}>
-            <option value="all">Filter</option>
+            <option value="all">Filter by Price</option>
             <option value="low">$0 - $200,000</option>
             <option value="mid">$200,000 - $500,000</option>
             <option value="high">$500,000+</option>
-            <option value="rent">For Rent</option>
-            <option value="sale">For Sale</option>
+          </select>
+          <select onChange={(e) => setSortOrder(e.target.value)}>
+            <option value="none">Sort by Price</option>
+            <option value="Low">Low to High</option>
+            <option value="High">High to Low</option>
           </select>
         </div>
 
@@ -122,7 +120,7 @@ function PropertyList() {
             <div key={property.id} className="property-card">
               <Link to={`/property/${property.id}`} className="property-link">
                 <div className="property-image-container">
-                  <img src={property.image} alt={property.title} />
+                  <img src={property.randomImage} alt={property.title} />
                 </div>
                 <div className="property-info">
                   <h3>{property.title}</h3>
@@ -136,7 +134,7 @@ function PropertyList() {
                   onClick={() => toggleMap(property.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                 {property.location}
+                  {property.location}
                 </span>
               </p>
               {visibleMap === property.id && (

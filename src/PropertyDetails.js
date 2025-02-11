@@ -57,14 +57,14 @@ function PropertyDetails() {
 
   const features = {
     basics: [
-      { icon: "fa-bed", text: "Bedrooms", value: "4" },
-      { icon: "fa-bath", text: "Bathrooms", value: "3" },
-      { icon: "fa-ruler-combined", text: "Square Feet", value: "3,500" },
+      { icon: "fa-bed", text: "Bedrooms", value: "12" },
+      { icon: "fa-bath", text: "Bathrooms", value: "5" },
+      { icon: "fa-ruler-combined", text: "Square Feet", value: "4000" },
       { icon: "fa-car", text: "Garage", value: "2 Cars" },
     ],
     comfort: [
       { icon: "fa-fan", text: "Climate Control", value: "Central AC" },
-      { icon: "fa-swimming-pool", text: "Pool", value: "Infinity" },
+      { icon: "fa-swimming-pool", text: "Pool", value: "2" },
       { icon: "fa-hot-tub", text: "Spa", value: "Jacuzzi" },
       { icon: "fa-sun", text: "Lighting", value: "Smart LED" },
     ],
@@ -130,13 +130,13 @@ function PropertyDetails() {
       <div className={`property-details ${isSold ? 'sold-out' : ''}`}>
         <div className="property-header">
           <div className="header-content">
-            <h1 className="property-title">Luxury Penthouse Suite</h1>
+            <h1 className="property-title">VIT</h1>
             <div className="property-meta">
               <div className="property-location">
                 <i className="fas fa-map-marker-alt"></i>
-                Downtown, Metropolis
+                Chennai,Tamil Nadu
               </div>
-              <div className="property-price">$5000,000</div>
+              <div className="property-price">$780,000</div>
             </div>
             <div className="property-tags">
               <span className="tag">Premium</span>
@@ -241,7 +241,7 @@ function PropertyDetails() {
               <i className="fas fa-user-circle"></i>
             </div>
             <div className="agent-details">
-              <h3>John Smith</h3>
+              <h3>Advitya</h3>
               <p>Luxury Property Specialist</p>
             </div>
           </div>
@@ -252,7 +252,7 @@ function PropertyDetails() {
         className="contact-button" 
         onClick={toggleAgentPopup}
       >
-        <i className="fas fa-phone-alt"></i> Contact Agent
+        <i className="fas fa-phone-alt"></i> Contact Builder
       </button>
 
       <button 
@@ -296,7 +296,7 @@ function PropertyDetails() {
               <div className="popup-content">
                 <span className="close-button" onClick={toggleAgentPopup}>&times;</span>
                 <h2>Agent Details</h2>
-                <p><strong>Name:</strong> John Smith</p>
+                <p><strong>Name:</strong> Advitya</p>
                 <p><strong>Address:</strong> 123 Luxury St, Metropolis</p>
                 <p><strong>Phone:</strong> +1 (234) 567-890</p>
                 <p className="rating">⭐⭐⭐⭐⭐</p>
@@ -319,5 +319,3 @@ function PropertyDetails() {
 }
 
 export default PropertyDetails;
-
-

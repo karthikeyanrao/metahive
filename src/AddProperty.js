@@ -4,6 +4,9 @@ import ThreeBackground from './ThreeBackground';
 import { db } from './context/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from './context/firebase';
+
 
 function AddProperty() {
   const navigate = useNavigate();
@@ -17,6 +20,20 @@ function AddProperty() {
     area: '',
     description: ''
   });
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    setSelectedFiles(files);
+  };
+  const handleUpload = () => {
+    if (selectedFiles.length === 0) {
+      alert("Please select files first!");
+      return;
+    }
+    console.log("Uploading files:", selectedFiles);
+    // Implement upload logic here
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +48,14 @@ function AddProperty() {
     setIsLoading(true);
 
     try {
+      const fileURLs = [];
       console.log('Starting property submission...');
+      for (const file of selectedFiles) {
+        const fileRef = ref(storage, `property-docs/${file.name}`);
+        await uploadBytes(fileRef, file);
+        const fileURL = await getDownloadURL(fileRef);
+        fileURLs.push(fileURL);
+      }
        // 🔹 Fetch latitude and longitude using OpenStreetMap API
        const locationQuery = encodeURIComponent(formData.location);
        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${locationQuery}&limit=1`);
@@ -61,7 +85,8 @@ function AddProperty() {
         description: formData.description,
         lat: lat, // ✅ Ensure lat is defined
         lng: lng, // ✅ Ensure lng is defined
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        documentUrl: fileURLs,
       };
   
 
@@ -87,7 +112,7 @@ function AddProperty() {
       // Redirect to properties page
       setTimeout(() => {
         navigate('/properties');
-      }, 1000);
+      }, 500);
 
     } catch (error) {
       console.error('Error details:', error);
@@ -188,6 +213,30 @@ function AddProperty() {
               />
             </div>
           </div>
+          <div className="form-row">
+  <div className="form-group">
+    <label htmlFor="documents">Upload Documents</label>
+    <input
+      type="file"
+      id="documents"
+      name="documents"
+      multiple
+      onChange={handleFileChange}
+      accept=".pdf,.doc,.docx,.jpg,.png"
+      
+    />
+    <small>Supported formats: PDF, DOC, DOCX, JPG, PNG</small>
+    <button 
+      className="upload-button" 
+      onClick={handleUpload} 
+      disabled={selectedFiles.length === 0}
+    >
+      Upload
+    </button >
+  </div>
+
+</div>
+
 
           <div className="form-group">
             <label htmlFor="description">Description</label>
@@ -208,7 +257,7 @@ function AddProperty() {
           >
             {isLoading ? (
               
-                <span className="loading-spinner"> </span>
+                <span> </span>
                     
             
             ) : (
