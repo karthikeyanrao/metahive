@@ -4,6 +4,7 @@ import { useWeb3 } from './context/Web3Context';
 import { useAuth } from './context/AuthContext';
 import { ethers } from 'ethers';
 import './Navbar.css';
+import meta from './meta.png';
 
 function Navbar() {
   const location = useLocation();
@@ -60,20 +61,21 @@ function Navbar() {
             
             <div className="account-section">
               <div className="wallet-container">
-                <button 
-                  onClick={() => setShowWalletDropdown(!showWalletDropdown)} 
-                  className="wallet-button"
-                >
-                  {isConnected ? (
-                    <>
-                      <i className="fas fa-wallet"></i>
-                      <span>{`${account?.slice(0, 6)}...${account?.slice(-4)}`}</span>
-                      <i className="fas fa-chevron-down"></i>
-                    </>
-                  ) : (
-                    <span onClick={connectWallet}>Connect Wallet</span>
-                  )}
-                </button>
+              <button 
+  onClick={() => setShowWalletDropdown(!showWalletDropdown)} 
+  className="wallet-button"
+>
+  {isConnected ? (
+    <>
+      <i className="fas fa-wallet"></i>
+      <img src={meta}  className="wallet-avatar" />
+      <i className="fas fa-chevron-down"></i>
+    </>
+  ) : (
+    <span onClick={connectWallet}>Connect Wallet</span>
+  )}
+</button>
+
                 
                 {showWalletDropdown && isConnected && (
                   <div className="wallet-dropdown">
@@ -99,7 +101,8 @@ function Navbar() {
                   className="avatar-button"
                   onClick={handleSettingsClick}
                 >
-                  <i className="fas fa-user-circle">U</i>
+                  <i className="fas fa-user-circle"></i>
+                  <img src={meta}  className="wallet-avatar" />
                 </button>
                 <button onClick={handleLogout} className="logout-button">
                   Logout
