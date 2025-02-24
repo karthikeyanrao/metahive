@@ -106,10 +106,10 @@
   color: #ffffff;
   font-size: 1rem;
   margin-top: 0.3rem;
-}
+} 
 
-.save-button {
-  background: linear-gradient(45deg,#9D6EFF, #52FFA8 );
+.logout-button {
+  background: linear-gradient(45deg,#eb6b6b, #fa0000 );
   color: white;
   border: none;
   padding: 1rem;
@@ -119,8 +119,8 @@
   margin-top: 1rem;
 }
 
-.save-button:hover {
-  background: linear-gradient(45deg, #52FFA8, #9D6EFF);
+.logout-button:hover {
+  background: linear-gradient(55deg, #fa0000, #eb6b6b);
 }
 
 .disabled-input, .readonly-input {

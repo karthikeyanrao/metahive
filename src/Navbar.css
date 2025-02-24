@@ -325,12 +325,12 @@
 }
 
 .wallet-container {
-  position: relative;
+    position: relative;
   margin-right: 1rem;
 }
 
 .wallet-button {
-  background: linear-gradient(145deg, #2c2c2c, #3d3d3d);
+  background: linear-gradient(145deg, #de7e47, #ff5d00);
   color: white;
   border: none;
   padding: 0.4rem ;
@@ -350,7 +350,7 @@
 }
 
 .wallet-button:hover {
-  background: linear-gradient(145deg, #3d3d3d, #2c2c2c);
+  background: linear-gradient(145deg, #ff5d00,#de7e47);
   transform: translateY(-2px);
 }
 
@@ -453,12 +453,14 @@
   }
 
   .wallet-dropdown {
+  
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 300px;
+
   }
 
   .avatar-button i {
@@ -472,6 +474,7 @@
 
 /* Update wallet button icon color */
 .wallet-button i {
+  
   color: #ffffff !important;
   font-size: 1.8rem !important;
 }

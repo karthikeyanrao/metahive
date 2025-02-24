@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PropertyDetails.css";
 import home from "./home.png";
 import ThreeBackground from './ThreeBackground';
@@ -7,7 +7,7 @@ import { useWeb3 } from './context/Web3Context';
 import { SENDER_ADDRESS, SENDER_ABI } from './contracts/SenderContract';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from "./context/firebase"; // Ensure db is properly exported
-import { doc, deleteDoc } from "firebase/firestore";  
+import { doc, deleteDoc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";  
 import BuildingBadge from './BuildingBadge';
 
 import b1 from './b1.jpg';
@@ -26,8 +26,9 @@ function PropertyDetails() {
   const [isSold, setIsSold] = useState(() => {
     return localStorage.getItem(`property_${id}_sold`) === 'true'
   });
-  const [property, setProperty] = useState(null);
+  const [property, setProperty] = useState({});
   const NFT_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  const [loading, setLoading] = useState(true);
 
   const toggleAgentPopup = () => {
     setShowAgentPopup(!showAgentPopup);
@@ -36,10 +37,22 @@ function PropertyDetails() {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this property?')) {
       try {
-        await deleteDoc(doc(db, 'properties', id));
-        localStorage.removeItem(`property_${id}_sold`);
-        alert('Property deleted successfully!');
-        navigate('/');
+        // Query to find the property by ID
+        const propertiesCollection = collection(db, 'properties');
+        const q = query(propertiesCollection, where('id', '==', id)); // Query by ID
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const propertyDoc = querySnapshot.docs[0].ref; // Get the document reference
+          
+          // Delete the property document
+          await deleteDoc(propertyDoc);
+          alert('Property deleted successfully!');
+          navigate('/properties');
+          window.scrollTo(0, 0);
+        } else {
+          alert('Property not found.'); // Handle case where property does not exist
+        }
       } catch (error) {
         console.error('Error deleting property:', error);
         alert('Failed to delete property. Please try again.');
@@ -57,10 +70,11 @@ function PropertyDetails() {
 
   const features = {
     basics: [
-      { icon: "fa-bed", text: "Bedrooms", value: "12" },
-      { icon: "fa-bath", text: "Bathrooms", value: "5" },
-      { icon: "fa-ruler-combined", text: "Square Feet", value: "4000" },
+      { icon: "fa-bed", text: "Bedrooms", value: property.bedrooms },
+      { icon: "fa-bath", text: "Bathrooms", value: property.bathrooms },
+      { icon: "fa-ruler-combined", text: "Square Feet", value: property.area },
       { icon: "fa-car", text: "Garage", value: "2 Cars" },
+      { icon: "fa-money-bill", text: "Furnished", value: property.furnished },
     ],
     comfort: [
       { icon: "fa-fan", text: "Climate Control", value: "Central AC" },
@@ -106,10 +120,30 @@ function PropertyDetails() {
       const tx = await senderContract.sendEther({ value: amountToSend });
       await tx.wait();
       
+      // Fetch the latest property data using a query
+      const propertiesCollection = collection(db, 'properties');
+      const q = query(propertiesCollection, where('id', '==', id)); // Query by ID
+      const querySnapshot = await getDocs(q);
+      
+      console.log("Fetching property data for ID:", id); // Log the ID being fetched
+
+      if (!querySnapshot.empty) {
+        const propertyDetails = querySnapshot.docs[0].data(); // Get the first document's data
+        
+        // Check if the property is still 'New' before updating
+        if (propertyDetails.isSold === 'New') {
+          const propertyDoc = querySnapshot.docs[0].ref; // Get the document reference
+          await updateDoc(propertyDoc, { isSold: 'Sold' }); // Update the status to 'Sold'
+          setIsSold(true); // Update local state
+          alert('Payment sent successfully! Property status updated to Sold.');
+        } else {
+          alert('Property is already sold or does not exist.');
+        }
+      } else {
+        alert('Property does not exist.'); // This alert indicates the property was not found
+      }
+      
       setPaymentStatus('');
-      setIsSold(true);
-      localStorage.setItem(`property_${id}_sold`, 'true');
-      alert('Payment sent successfully!');
     } catch (error) {
       console.error('Payment error:', error);
       setPaymentStatus('');
@@ -124,19 +158,61 @@ function PropertyDetails() {
     }
   };
 
+  useEffect(() => {
+    const fetchPropertyDetails = async () => {
+      setLoading(true);
+      try {
+        const propertiesCollection = collection(db, 'properties');
+        const q = query(propertiesCollection, where('id', '==', id)); // Query by ID
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const propertyDetails = querySnapshot.docs[0].data(); // Get the first document's data
+          console.log("Fetched property details:", propertyDetails);
+          
+          // Fetch the NftMinted status
+          const nftMintedStatus = propertyDetails.NftMinted; // Assuming NftMinted is a field in the property document
+          console.log('NftMinted status:', nftMintedStatus); // Log the NftMinted status
+
+          setProperty({
+            title: propertyDetails.title,
+            location: propertyDetails.location,
+            amount: propertyDetails.price,
+            isSold: propertyDetails.isSold,
+            bedrooms: propertyDetails.bedrooms,
+            bathrooms: propertyDetails.bathrooms,
+            area: propertyDetails.area,
+            furnished: propertyDetails.furnishedStatus,
+            nftMinted: nftMintedStatus // Store the NftMinted status in the property state
+          });
+          setIsSold(propertyDetails.isSold === 'Sold'); // Set isSold based on Firestore data
+        } else {
+          console.error('No such document!');
+          alert('Property not found.');
+        }
+      } catch (error) {
+        console.error('Error fetching property details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPropertyDetails();
+  }, [id]);
+
   return (
     <>
       <ThreeBackground />
       <div className={`property-details ${isSold ? 'sold-out' : ''}`}>
         <div className="property-header">
           <div className="header-content">
-            <h1 className="property-title">VIT</h1>
+            <h1 className="property-title">{property.title}</h1>
             <div className="property-meta">
               <div className="property-location">
                 <i className="fas fa-map-marker-alt"></i>
-                Chennai,Tamil Nadu
+                {property.location}
               </div>
-              <div className="property-price">$780,000</div>
+              <div className="property-price">${property.amount}</div>
             </div>
             <div className="property-tags">
               <span className="tag">Premium</span>
@@ -310,7 +386,12 @@ function PropertyDetails() {
             contractAddress={NFT_CONTRACT_ADDRESS}
             tokenId={0}
             isSold={isSold}
+            propertyTitle={property.title}
+            nftMinted={property.nftMinted}
           />
+        </div>
+        <div>
+          
         </div>
         
       </div>

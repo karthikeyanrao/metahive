@@ -9,58 +9,55 @@ const ThreeBackground = () => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x13111C, 1);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Create particles
-    const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 5000;
-    const posArray = new Float32Array(particlesCount * 3);
+    // Create galaxy
+    const galaxyGeometry = new THREE.BufferGeometry();
+    const galaxyCount = 15000; // Increased count for denser effect
+    const positions = new Float32Array(galaxyCount * 3);
+    const colors = new Float32Array(galaxyCount * 3);
 
-    for(let i = 0; i < particlesCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 5;
+    for (let i = 0; i < galaxyCount; i++) {
+      const radius = Math.random() * 6; // Slightly larger radius
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+
+      const x = radius * Math.sin(phi) * Math.cos(theta);
+      const y = radius * Math.sin(phi) * Math.sin(theta);
+      const z = radius * Math.cos(phi);
+
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+
+      colors[i * 3] = Math.random() * 0.6 + 0.4;
+      colors[i * 3 + 1] = Math.random() * 0.4 + 0.2;
+      colors[i * 3 + 2] = Math.random() * 0.8 + 0.2; // More bluish tint
     }
 
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    // Create material with custom shader
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.005,
-      color: 0x52FFA8,
+    const galaxyMaterial = new THREE.PointsMaterial({
+      size: 0.08, // Larger particles
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
       transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending
+      opacity: 1,
+      depthWrite: false
     });
 
-    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particlesMesh);
+    const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
+    scene.add(galaxy);
 
-    camera.position.z = 3;
-
-    // Mouse movement effect
-    let mouseX = 0;
-    let mouseY = 0;
-
-    const handleMouseMove = (event) => {
-      mouseX = event.clientX / window.innerWidth - 0.5;
-      mouseY = event.clientY / window.innerHeight - 0.5;
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
+    camera.position.z = 5;
 
     // Animation
     const animate = () => {
       requestAnimationFrame(animate);
-
-      particlesMesh.rotation.y += 0.001;
-      particlesMesh.rotation.x += 0.001;
-
-      // Smooth camera movement based on mouse position
-      camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.05;
-
+      galaxy.rotation.y += 0.001;
+      galaxy.rotation.x += 0.0006;
       renderer.render(scene, camera);
     };
 
@@ -77,35 +74,20 @@ const ThreeBackground = () => {
 
     // Cleanup
     return () => {
-      // Remove event listeners
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
-
-      // Dispose of geometries and materials
-      if (particlesGeometry) particlesGeometry.dispose();
-      if (particlesMaterial) particlesMaterial.dispose();
-
-      // Clear all objects from scene
-      while(scene.children.length > 0){ 
-        scene.remove(scene.children[0]);
+      galaxyGeometry.dispose();
+      galaxyMaterial.dispose();
+      scene.clear();
+      renderer.dispose();
+      if (mountRef.current && renderer.domElement.parentNode === mountRef.current) {
+        mountRef.current.removeChild(renderer.domElement);
       }
-
-      // Dispose of renderer
-      if (renderer) {
-        renderer.dispose();
-        if (renderer.domElement && renderer.domElement.parentNode) {
-          renderer.domElement.parentNode.removeChild(renderer.domElement);
-        }
-      }
-
-      // Cancel any pending animation frames
-      cancelAnimationFrame(animate);
     };
   }, []);
 
   return (
-    <div 
-      ref={mountRef} 
+    <div
+      ref={mountRef}
       style={{
         position: 'fixed',
         top: 0,
@@ -113,11 +95,11 @@ const ThreeBackground = () => {
         width: '100%',
         height: '100%',
         zIndex: 0,
-        background: 'linear-gradient(135deg, #13111C 0%, #1A1625 50%, #13111C 100%)',
+        background: 'black',
         pointerEvents: 'none'
       }}
     />
   );
 };
 
-export default ThreeBackground; 
+export default ThreeBackground;

@@ -15,7 +15,6 @@ function Navbar() {
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [walletBalance, setWalletBalance] = useState(null);
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchBalance = async () => {
       if (isConnected && account) {
@@ -28,18 +27,22 @@ function Navbar() {
         }
       }
     };
-
+  
     fetchBalance();
+    const interval = setInterval(fetchBalance, 10000); // Fetch every 10s 
+  
+    return () => clearInterval(interval);
   }, [isConnected, account]);
+  
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     await logout();
+  //     navigate('/');
+  //   } catch (error) {
+  //     console.error('Logout error:', error);
+  //   }
+  // };
 
   const handleSettingsClick = () => {
     navigate('/settings');
@@ -105,9 +108,9 @@ function Navbar() {
                   <i className="fas fa-user-circle"></i>
                   <img src={user}  className="wallet-avatar" />
                 </button>
-                <button onClick={handleLogout} className="logout-button">
+                {/* <button onClick={handleLogout} className="logout-button">
                   Logout
-                </button>
+                </button> */}
               </div>
             </div>
           </>

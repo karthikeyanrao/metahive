@@ -6,14 +6,14 @@ import ThreeBackground from './ThreeBackground';
 
 function BuilderRegistration() {
   const [formData, setFormData] = useState({
-    builderName: '',
+    name: '',
     companyName: '',
     licenseNumber: '',
     email: '',
     phone: '',
     address: '',
     password: '',
-    description: ''
+    aadharNo: ''
   });
 
   const [success, setSuccess] = useState(null);
@@ -32,6 +32,7 @@ function BuilderRegistration() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    window.scrollTo(0, 0); // Scroll to the top of the window
     try {
       // Step 1: Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
@@ -42,42 +43,58 @@ function BuilderRegistration() {
 
       const user = userCredential.user;
 
-      // Step 2: Save builder details in Firestore
-      const builderData = {
-        builderName: formData.builderName,
+      // Step 2: Save user details in Firestore under Users collection
+      const userData = {
+        name: formData.name,
         companyName: formData.companyName,
         licenseNumber: formData.licenseNumber,
         email: formData.email,
         phone: formData.phone,
         address: formData.address,
-        description: formData.description,
-        role: 'builder',
+        aadharNo: formData.aadharNo,
+        role: 'Builder',
         registrationDate: new Date().toISOString(),
-        userId: user.uid
+        userId: user.uid,
+        licenseImage: localStorage.getItem('licenseImage') // Store license image path
       };
 
-      // Save to Firestore
-      await setDoc(doc(db, "builders", user.uid), builderData);
+      // Save to Firestore in Users collection
+      await setDoc(doc(db, "Users", user.uid), userData);
 
-      setSuccess(`Builder registered successfully! Welcome, ${formData.builderName}`);
+      setSuccess(`User registered successfully! Welcome, ${formData.name}`);
       setError(null);
 
       // Clear form after successful registration
       setFormData({
-        builderName: '',
+        name: '',
         companyName: '',
         licenseNumber: '',
         email: '',
         phone: '',
         address: '',
         password: '',
-        description: ''
+        aadharNo: ''
       });
+
+      // Redirect to dashboard page
+      window.location.href = '/dashboard'; // Redirect to dashboard
 
     } catch (err) {
       setError(err.message);
       setSuccess(null);
       console.error("Error during registration:", err);
+    }
+  };
+
+  // New function to handle license image upload
+  const handleLicenseImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        localStorage.setItem('licenseImage', reader.result); // Store image in local storage
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -95,14 +112,38 @@ function BuilderRegistration() {
           )}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Builder/Company Name *</label>
+              <label>Name *</label>
               <input
                 type="text"
-                name="builderName"
-                value={formData.builderName}
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 required
-                placeholder="Enter builder or company name"
+                placeholder="Enter your name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Aadhar Number *</label>
+              <input
+                type="text"
+                name="aadharNo"
+                value={formData.aadharNo}
+                onChange={handleInputChange}
+                required
+                placeholder="Enter your Aadhar number"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Company Name *</label>
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                required
+                placeholder="Enter company name"
               />
             </div>
 
@@ -114,34 +155,41 @@ function BuilderRegistration() {
                 value={formData.licenseNumber}
                 onChange={handleInputChange}
                 required
-                placeholder="Enter builder license number"
+                placeholder="Enter license number"
+              />
+            </div>
+            <div className="form-group">
+              <label>License Image *</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLicenseImageUpload}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Email *</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                placeholder="Enter email address"
               />
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Email *</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Enter email address"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Phone *</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Enter phone number"
-                />
-              </div>
+            <div className="form-group">
+              <label>Phone *</label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required
+                placeholder="Enter phone number"
+              />
             </div>
 
             <div className="form-group">
@@ -167,15 +215,7 @@ function BuilderRegistration() {
               />
             </div>
 
-            <div className="form-group">
-              <label>Company Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Tell us about your company and previous projects"
-              />
-            </div>
+          
 
             <button type="submit" className="submit-button">
               Register as Builder

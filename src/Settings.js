@@ -12,12 +12,15 @@ import ThreeBackground from './ThreeBackground';
 const storage = getStorage(); // Initialize Firebase Storage
 
 function Settings() {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
   const { isConnected, account } = useWeb3();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [isBuilder, setIsBuilder] = useState(localStorage.getItem('isBuilder') === 'true');
+  const [userRole, setUserRole] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
   const [profileData, setProfileData] = useState({
     name: '',
@@ -31,9 +34,10 @@ function Settings() {
     const fetchUserData = async () => {
       if (currentUser?.uid) {
         try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          const userDoc = await getDoc(doc(db, 'Users', currentUser.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
+            console.log("Fetched User Data:", userData); // Log the fetched user data
             const builderStatus = userData.isBuilder || false;
             setIsBuilder(builderStatus);
             localStorage.setItem('isBuilder', builderStatus);
@@ -45,6 +49,16 @@ function Settings() {
               avatar: userData.avatar || currentUser.photoURL || '',
               isBuilder: builderStatus
             }));
+            setUserRole(userData.role);
+            setUserName(userData.name);
+            setUserEmail(currentUser.email);
+
+            // Log the user's name, role, and email to the console
+            console.log("User Name:", userData.name);
+            console.log("User Role:", userData.role);
+            console.log("User Email:", currentUser.email);
+          } else {
+            console.log("User document does not exist.");
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -54,11 +68,12 @@ function Settings() {
 
     fetchUserData();
   }, [currentUser]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (currentUser?.uid) {
         try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          const userDoc = await getDoc(doc(db, 'Users', currentUser.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setProfileData(prev => ({
@@ -91,6 +106,7 @@ function Settings() {
 
     fetchBalance();
   }, [isConnected, account]);
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -165,6 +181,16 @@ function Settings() {
     }));
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      alert('Error logging out: ' + error.message);
+    }
+  };
+
   return (
     <div>
       <ThreeBackground />
@@ -232,19 +258,9 @@ function Settings() {
                 </div>
               </div>
 
-              {/* Builder Checkbox */}
-              <div className="builder-section">
-                <div className="builder-checkbox">
-                  <input
-                    type="checkbox"
-                    id="isBuilder"
-                    checked={isBuilder}
-                    onChange={handleBuilderChange}
-                  />
-                  <label htmlFor="isBuilder">I am a Builder</label>
-                </div>
+             <div>
                 
-                {isBuilder && (
+                {userRole === 'Builder' && (
                   <button 
                     type="button" 
                     className="add-property-button"
@@ -255,12 +271,14 @@ function Settings() {
                 )}
               </div>
 
-              <button type="submit" className="save-button">
-                Save Changes
+              <button type="button" className="logout-button" onClick={handleLogout}>
+                Logout
               </button>
             </form>
           </div>
         </div>
+
+        
       </div>
     </div>
   );
