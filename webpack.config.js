@@ -21,7 +21,15 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: [
+          {
+            loader: 'style-loader',
+            options: {
+              injectType: 'styleTag'
+            }
+          },
+          'css-loader'
+        ]
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
@@ -39,5 +47,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx']
+  },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
   }
 }; 
