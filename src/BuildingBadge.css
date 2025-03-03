@@ -202,29 +202,16 @@
 
 .form-group {
   margin-bottom: 1.5rem;
+  display: flex;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: #fff;
+  
 }
 
-.form-group input {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  font-size: 1rem;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #ff4d4d;
-  box-shadow: 0 0 0 2px rgba(255, 77, 77, 0.2);
-}
 
 .form-buttons {
   display: flex;
@@ -256,57 +243,57 @@
 
 /* Add or update these styles */
 .mint-form-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.mint-form {
-  background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
-  padding: 2rem;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(28, 28, 36, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .mint-form h3 {
-  color: #ff4d4d;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
+  color: #fff;
+  font-weight: 700;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
+  font-weight: 600;
   color: #fff;
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.8rem;
+  padding: 12px 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
+  font-size: 16px;
   background: rgba(255, 255, 255, 0.05);
   color: #fff;
-  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 .form-group input:focus {
+  border-color: #4361ee;
   outline: none;
-  border-color: #ff4d4d;
-  box-shadow: 0 0 0 2px rgba(255, 77, 77, 0.2);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.form-help {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .form-buttons {
@@ -381,4 +368,209 @@
   color: black;
   text-decoration: none;
   cursor: pointer;
-} 
+}
+
+/* NFT Badge Styling */
+.nft-badge {
+  padding: 24px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.3s ease;
+  max-width: 800px;
+  margin: 0 auto 30px;
+}
+
+.nft-badge:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+}
+
+.nft-badge h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #1a1a2e;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+
+.badge-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.badge-image {
+  flex: 1;
+  min-width: 240px;
+  padding: 10px;
+}
+
+.nft-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 5px solid white;
+  transition: transform 0.3s ease;
+}
+
+.nft-image:hover {
+  transform: scale(1.02);
+}
+
+.badge-details {
+  flex: 1.5;
+  min-width: 290px;
+  background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.badge-details p {
+  margin: 12px 0;
+  font-size: 15px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  line-height: 1.6;
+}
+
+.badge-details strong {
+  min-width: 100px;
+  display: inline-block;
+  font-weight: 600;
+  color: #16213e;
+}
+
+.badge-details a {
+  color: #4361ee;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.badge-details a:hover {
+  color: #3b28cc;
+  text-decoration: underline;
+}
+
+/* Mint Button Styling */
+.mint-button {
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.4);
+}
+
+.mint-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(106, 17, 203, 0.5);
+}
+
+.mint-button:disabled {
+  background: #a9a9a9;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancel-button {
+  background: linear-gradient(45deg, #ff5e62, #ff9966);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+  box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3);
+}
+
+.cancel-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(255, 94, 98, 0.4);
+}
+
+/* Form styling */
+.mint-form-container {
+  background: rgba(28, 28, 36, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mint-form h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #4361ee;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.form-help {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.error-message {
+  background-color: rgba(214, 48, 49, 0.2);
+  color: #ff6b6b;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border-left: 4px solid #ff0000;
+}

@@ -9,18 +9,16 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './Settings.css';
 import ThreeBackground from './ThreeBackground';
 
-const storage = getStorage(); // Initialize Firebase Storage
+
 
 function Settings() {
   const { currentUser, logout } = useAuth();
   const { isConnected, account } = useWeb3();
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [isBuilder, setIsBuilder] = useState(localStorage.getItem('isBuilder') === 'true');
   const [userRole, setUserRole] = useState(null);
-  const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
+
 
   const [profileData, setProfileData] = useState({
     name: '',
@@ -37,7 +35,6 @@ function Settings() {
           const userDoc = await getDoc(doc(db, 'Users', currentUser.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            console.log("Fetched User Data:", userData); // Log the fetched user data
             const builderStatus = userData.isBuilder || false;
             setIsBuilder(builderStatus);
             localStorage.setItem('isBuilder', builderStatus);
@@ -53,10 +50,6 @@ function Settings() {
             setUserName(userData.name);
             setUserEmail(currentUser.email);
 
-            // Log the user's name, role, and email to the console
-            console.log("User Name:", userData.name);
-            console.log("User Role:", userData.role);
-            console.log("User Email:", currentUser.email);
           } else {
             console.log("User document does not exist.");
           }
@@ -107,30 +100,6 @@ function Settings() {
     fetchBalance();
   }, [isConnected, account]);
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-  
-    try {
-      const storageRef = ref(storage, `avatars/${currentUser.uid}`);
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-  
-      // Update Firestore and local state
-      await updateDoc(doc(db, "users", currentUser.uid), { avatar: downloadURL });
-      setProfileData(prev => ({ ...prev, avatar: downloadURL }));
-      localStorage.setItem('avatar', downloadURL);
-  
-      console.log("Avatar uploaded successfully:", downloadURL);
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
-    }
-  };
-  
-  
-  const handleUploadClick = () => {
-    fileInputRef.current.click(); // Trigger file input
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -172,14 +141,6 @@ function Settings() {
     }
   };
 
-  const handleBuilderChange = (e) => {
-    const isChecked = e.target.checked;
-    setIsBuilder(isChecked);
-    setProfileData(prev => ({
-      ...prev,
-      isBuilder: isChecked
-    }));
-  };
 
   const handleLogout = async () => {
     try {
@@ -199,28 +160,6 @@ function Settings() {
 
         <div className="settings-content">
           <div className="profile-section">
-
-            {/* Avatar Section
-            <div className="avatar-section">
-              <div className="avatar-preview">
-                {profileData.avatar ? (
-                  <img src={profileData.avatar} alt="Profile" />
-                ) : (
-                  <i className="fas fa-user-circle"></i>
-                )}
-              </div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-              <button className="upload-button" onClick={handleUploadClick}>
-                <i className="fas fa-camera"></i> Upload Photo
-              </button>
-            </div> */}
-
-            {/* Profile Form */}
             <form onSubmit={handleSubmit} className="profile-form">
 
               <div className="form-group">

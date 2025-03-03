@@ -54,7 +54,6 @@ function PropertyDetails() {
           alert('Property not found.'); // Handle case where property does not exist
         }
       } catch (error) {
-        console.error('Error deleting property:', error);
         alert('Failed to delete property. Please try again.');
       }
     }
@@ -125,7 +124,6 @@ function PropertyDetails() {
       const q = query(propertiesCollection, where('id', '==', id)); // Query by ID
       const querySnapshot = await getDocs(q);
       
-      console.log("Fetching property data for ID:", id); // Log the ID being fetched
 
       if (!querySnapshot.empty) {
         const propertyDetails = querySnapshot.docs[0].data(); // Get the first document's data
@@ -163,16 +161,14 @@ function PropertyDetails() {
       setLoading(true);
       try {
         const propertiesCollection = collection(db, 'properties');
-        const q = query(propertiesCollection, where('id', '==', id)); // Query by ID
+        const q = query(propertiesCollection, where('id', '==', id));
         const querySnapshot = await getDocs(q);
         
         if (!querySnapshot.empty) {
           const propertyDetails = querySnapshot.docs[0].data(); // Get the first document's data
-          console.log("Fetched property details:", propertyDetails);
-          
+         
           // Fetch the NftMinted status
           const nftMintedStatus = propertyDetails.NftMinted; // Assuming NftMinted is a field in the property document
-          console.log('NftMinted status:', nftMintedStatus); // Log the NftMinted status
 
           setProperty({
             title: propertyDetails.title,
@@ -183,11 +179,12 @@ function PropertyDetails() {
             bathrooms: propertyDetails.bathrooms,
             area: propertyDetails.area,
             furnished: propertyDetails.furnishedStatus,
-            nftMinted: nftMintedStatus // Store the NftMinted status in the property state
+            nftMinted: nftMintedStatus, // Store the NftMinted status in the property state
+            builderName: propertyDetails.builderName,
+            builderEmail: propertyDetails.builderEmail,
           });
           setIsSold(propertyDetails.isSold === 'Sold'); // Set isSold based on Firestore data
         } else {
-          console.error('No such document!');
           alert('Property not found.');
         }
       } catch (error) {
@@ -317,7 +314,7 @@ function PropertyDetails() {
               <i className="fas fa-user-circle"></i>
             </div>
             <div className="agent-details">
-              <h3>Advitya</h3>
+              <h3>{property.builderName}</h3>
               <p>Luxury Property Specialist</p>
             </div>
           </div>
@@ -371,10 +368,10 @@ function PropertyDetails() {
             <div className="agent-popup">
               <div className="popup-content">
                 <span className="close-button" onClick={toggleAgentPopup}>&times;</span>
-                <h2>Agent Details</h2>
-                <p><strong>Name:</strong> Advitya</p>
+                <h2>Builder Details</h2>
+                <p><strong>Name:</strong> {property.builderName || 'Not available'}</p>
+                <p><strong>Email:</strong> {property.builderEmail || 'Not available'}</p>
                 <p><strong>Address:</strong> 123 Luxury St, Metropolis</p>
-                <p><strong>Phone:</strong> +1 (234) 567-890</p>
                 <p className="rating">⭐⭐⭐⭐⭐</p>
               </div>
             </div>

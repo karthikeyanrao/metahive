@@ -4,17 +4,14 @@ import ThreeBackground from './ThreeBackground';
 import { db } from './context/firebase';    
 import { collection, addDoc, getDoc, doc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from './context/firebase';
 import { useAuth } from './context/AuthContext';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
-import { userData } from 'three/tsl';
 
 
 function AddProperty() {
   const navigate = useNavigate();
   
-  const { user } = useAuth(); // Get user details from the useAuth hook
+  const { user, currentUser } = useAuth(); // Get user details from the useAuth hook
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -63,6 +60,23 @@ function AddProperty() {
     fetchUserName(); // Call the function to fetch user name
   }, [user, db]);
 
+  useEffect(() => {
+    if (currentUser) {
+          // Also fetch and log the complete user data from Firestore
+      const fetchUserData = async () => {
+        try {
+          const userDoc = await getDoc(doc(db, 'Users', currentUser.uid));
+          if (userDoc.exists()) {
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+      
+      fetchUserData();
+    }
+  }, [currentUser]);
+
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     const fileReaders = files.map(file => {
@@ -101,7 +115,13 @@ function AddProperty() {
 
   const handleUpload = async () => {
     // Generate a unique ID for the building
-    const uniqueId = uuidv4(); // Generate a unique ID
+    const uniqueId = uuidv4();
+
+    // Validate required fields before proceeding
+    if (!formData.title || !formData.price || !formData.location) {
+      alert("Please fill in all required fields");
+      return;
+    }
 
     if (selectedFiles.length > 0) {
       try {
@@ -109,25 +129,26 @@ function AddProperty() {
         selectedFiles.forEach(file => {
           const reader = new FileReader();
           reader.onloadend = () => {
-            localStorage.setItem(`${uniqueId}_${file.name}`, reader.result); // Store image in local storage with unique ID
+            localStorage.setItem(`${uniqueId}_${file.name}`, reader.result);
           };
           reader.readAsDataURL(file);
         });
-
-        // Optionally, you can alert the user that images are stored locally
-        alert("Images have been stored locally.");
-
       } catch (error) {
         console.error("Error handling files:", error);
         alert("Error handling files: " + error.message);
+        return; // Return early if there's an error with files
       }
     }
     
-    // Scroll to the top of the page after clicking the button
+    // Scroll to the top of the page
     window.scrollTo(0, 0);
     
-    // Call handleSubmit with the unique ID
-    await handleSubmit(uniqueId); // Pass the unique ID to handleSubmit
+    try {
+      // Call handleSubmit with the unique ID
+      await handleSubmit(uniqueId);
+    } catch (error) {
+      alert("Error submitting form: " + error.message);
+    }
   };
 
   const handleChange = (e) => {
@@ -153,7 +174,6 @@ function AddProperty() {
     setIsLoading(true);
 
     try {
-      console.log('Starting property submission...');
        // 🔹 Fetch latitude and longitude using OpenStreetMap API
        const locationQuery = encodeURIComponent(formData.location);
        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${locationQuery}&limit=1`);
@@ -169,75 +189,75 @@ function AddProperty() {
        const lat = parseFloat(data[0].lat);
        const lng = parseFloat(data[0].lon);
    
-       console.log(`Fetched Coordinates: ${lat}, ${lng}`);
    
-       // 🔹 Prepare property data with lat/lng and unique ID
-      const propertyData = {
-        id: uniqueId, // Store the unique ID
-        title: formData.title,
-        price: Number(formData.price),
-        location: formData.location,
-        bedrooms: Number(formData.bedrooms),
-        bathrooms: Number(formData.bathrooms),
-        area: Number(formData.area),
-        description: formData.description,
-        NftMinted: formData.NftMinted,
-        lat: lat, // ✅ Ensure lat is defined
-        lng: lng, // ✅ Ensure lng is defined
-        createdAt: new Date().toISOString(),
-        builder: {
-          name: '', // Fetch builder's name from user
-          email:  '' // Fetch builder's email from user
-        },
-        isSold: "New",
-        rawMaterials: formData.rawMaterials,
-        buildingDescription: formData.buildingDescription,
-        details: formData.details,
-        furnishedStatus: formData.furnishedStatus,
-        amenities: formData.amenities
-      };
-  
-
-
-      // Add to Firestore
-      console.log('Saving to database...', propertyData);
-      const docRef = await addDoc(collection(db, 'properties'), propertyData);
-      
-      // Store the unique ID in local storage
-      localStorage.setItem('propertyId', uniqueId);
-      
-      console.log('Property added successfully with ID: ', docRef.id);
-      alert('Property listed successfully! Redirecting to properties page...');
-      
-      // Clear form
-      setFormData({
-        title: '',
-        price: '',
-        location: '',
-        bedrooms: '',
-        bathrooms: '',
-        area: '',
-        description: '',
-        NftMinted: 'No',
-        name: '',
-        rawMaterials: '',
-        buildingDescription: '',
-        details: '',
-        furnishedStatus: 'Non-Furnished',
-        amenities: {
-          carParking: false,
-          swimmingPool: false,
-          security: false,
-          cctv: false,
-        }
-      });
-      setSelectedFiles([]);
-      
-      // Redirect to properties page
-      setTimeout(() => {
-        navigate('/properties');
-      }, 500);
-
+       // 🔹 Fetch user data using currentUser.uid
+       const userDoc = await getDoc(doc(db, 'Users', currentUser.uid));
+       if (userDoc.exists()) {
+         const userData = userDoc.data();
+         
+         // 🔹 Prepare property data with lat/lng and unique ID
+         const propertyData = {
+           id: uniqueId, // Store the unique ID
+           title: formData.title,
+           price: Number(formData.price),
+           location: formData.location,
+           bedrooms: Number(formData.bedrooms),
+           bathrooms: Number(formData.bathrooms),
+           area: Number(formData.area),
+           description: formData.description,
+           NftMinted: formData.NftMinted,
+           lat: lat, // ✅ Ensure lat is defined
+           lng: lng, // ✅ Ensure lng is defined
+           createdAt: new Date().toISOString(),
+           builderId: currentUser.uid,
+           builderName: userData.name,
+           builderEmail: currentUser.email,
+           isSold: "New",
+           rawMaterials: formData.rawMaterials,
+           buildingDescription: formData.buildingDescription,
+           details: formData.details,
+           furnishedStatus: formData.furnishedStatus,
+           amenities: formData.amenities
+         };
+         
+         
+         // Add to Firestore
+         const docRef = await addDoc(collection(db, 'properties'), propertyData);
+         
+         // Store the unique ID in local storage
+         localStorage.setItem('propertyId', uniqueId);
+         
+         alert('Property listed successfully! Redirecting to properties page...');
+         
+         // Clear form
+         setFormData({
+           title: '',
+           price: '',
+           location: '',
+           bedrooms: '',
+           bathrooms: '',
+           area: '',
+           description: '',
+           NftMinted: 'No',
+           name: '',
+           rawMaterials: '',
+           buildingDescription: '',
+           details: '',
+           furnishedStatus: 'Non-Furnished',
+           amenities: {
+             carParking: false,
+             swimmingPool: false,
+             security: false,
+             cctv: false,
+           }
+         });
+         setSelectedFiles([]);
+         
+         // Redirect to properties page
+         setTimeout(() => {
+           navigate('/properties');
+         }, 500);
+       }
     } catch (error) {
       console.error('Error details:', error);
       alert('Error adding property: ' + error.message);
@@ -246,7 +266,6 @@ function AddProperty() {
     }
   };
 
-  console.log("User object:", user);
 
   return (
     <>
@@ -257,7 +276,13 @@ function AddProperty() {
            Back
         </button>
         <h2>List Your Property</h2>
-        <form onSubmit={(e) => { e.preventDefault(); handleUpload(); }} className="property-form">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleUpload();
+          }} 
+          className="property-form"
+        >
           <div className="form-group">
             <label htmlFor="title">Property Title</label>
             <input
@@ -458,32 +483,15 @@ function AddProperty() {
   </div>
 </div>
 
-          <div className="form-group">
-            <label htmlFor="documents">Upload Documents (Optional)</label>
-            <input
-              type="file"
-              id="documents"
-              name="documents"
-              multiple
-              onChange={handleFileChange}
-              accept=".pdf,.doc,.docx,.jpg,.png"
-            />
-            <small>Supported formats: PDF, DOC, DOCX, JPG, PNG</small>
-          </div>
+          
 
           <button 
             type="submit" 
             className="submit-button"
+            onClick={handleUpload}
             disabled={isLoading}
           >
-            {isLoading ? (
-              
-                <span> </span>
-                    
-            
-            ) : (
-              'Add Property'
-            )}
+            {isLoading ? 'Submitting...' : 'Add Property'}
           </button>
         </form>
       </div>
