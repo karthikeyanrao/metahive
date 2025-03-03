@@ -4,7 +4,7 @@
   "description": "MetaHive Real Estate NFT Platform",
   "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
+    "start": "webpack serve --mode development",
     "build": "webpack --mode production",
     "test": "hardhat test",
     "compile": "hardhat compile",
