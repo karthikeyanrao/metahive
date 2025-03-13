@@ -188,14 +188,7 @@ function BuyerRegistration() {
               <small>Upload your Aadhar card (PDF, JPG, PNG)</small>
             </div>
 
-            {/* Display the Aadhar image if it exists in local storage */}
-            {aadharProofBase64 && (
-              <div className="image-preview">
-                <h3>Aadhar Card Preview:</h3>
-                <img src={aadharProofBase64} alt="Aadhar Proof" style={{ maxWidth: '100%', maxHeight: '300px' }} />
-              </div>
-            )}
-
+          
             <div className="form-row">
               <div className="form-group">
                 <label>Email *</label>
